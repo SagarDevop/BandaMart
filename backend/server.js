@@ -1,0 +1,227 @@
+import express from 'express';
+import cors from 'cors';
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/bandamart';
+
+// Enable CORS for frontend local development
+app.use(cors());
+app.use(express.json());
+
+// --- MongoDB / Mongoose Connection ---
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB successfully!'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
+// --- Schemas & Models ---
+const categorySchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  icon: { type: String, required: true },
+  color: { type: String, required: true },
+  bgColor: { type: String, required: true },
+  image: { type: String, default: '' }
+}, { timestamps: true });
+
+const Category = mongoose.model('Category', categorySchema);
+
+const productSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  category: { type: String, required: true }, // references category.id
+  price: { type: Number, required: true },
+  unit: { type: String, required: true },
+  image: { type: String, default: '' },
+  description: { type: String, default: '' },
+  available: { type: Boolean, default: true },
+  featured: { type: Boolean, default: false }
+}, { timestamps: true });
+
+const Product = mongoose.model('Product', productSchema);
+
+// Multer in-memory storage configuration
+const upload = multer({ storage: multer.memoryStorage() });
+
+// --- API Endpoints ---
+
+// Login Endpoint
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  const configuredUser = process.env.ADMIN_USERNAME || 'banda_admin';
+  const configuredPass = process.env.ADMIN_PASSWORD || 'BandaMart@Launch2026!';
+
+  if (username === configuredUser && password === configuredPass) {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
+// Cloudinary Image Upload Endpoint
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+  if (!cloudName || !apiKey || !apiSecret) {
+    return res.status(500).json({
+      error: 'Cloudinary is not configured on the backend server. Please verify .env settings.'
+    });
+  }
+
+  cloudinary.config({
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret
+  });
+
+  const stream = cloudinary.uploader.upload_stream(
+    { folder: 'bandamart' },
+    (error, result) => {
+      if (error) {
+        console.error('Cloudinary upload error:', error);
+        return res.status(500).json({ error: 'Cloudinary upload failed: ' + error.message });
+      }
+      res.json({ secure_url: result.secure_url });
+    }
+  );
+
+  stream.end(req.file.buffer);
+});
+
+// Categories Endpoints
+app.get('/api/categories', async (req, res) => {
+  try {
+    const categories = await Category.find();
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch categories: ' + err.message });
+  }
+});
+
+app.post('/api/categories', async (req, res) => {
+  try {
+    const newCategory = new Category({
+      ...req.body,
+      id: 'cat_' + Date.now()
+    });
+    await newCategory.save();
+    res.status(201).json(newCategory);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create category: ' + err.message });
+  }
+});
+
+app.put('/api/categories/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updated = await Category.findOneAndUpdate({ id }, req.body, { new: true });
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: 'Category not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update category: ' + err.message });
+  }
+});
+
+app.delete('/api/categories/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await Category.findOneAndDelete({ id });
+    if (deleted) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ error: 'Category not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete category: ' + err.message });
+  }
+});
+
+// Products Endpoints
+app.get('/api/products', async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch products: ' + err.message });
+  }
+});
+
+app.post('/api/products', async (req, res) => {
+  try {
+    const newProduct = new Product({
+      ...req.body,
+      id: 'p_' + Date.now()
+    });
+    await newProduct.save();
+    res.status(211).json(newProduct);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create product: ' + err.message });
+  }
+});
+
+app.put('/api/products/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updated = await Product.findOneAndUpdate({ id }, req.body, { new: true });
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: 'Product not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update product: ' + err.message });
+  }
+});
+
+app.delete('/api/products/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await Product.findOneAndDelete({ id });
+    if (deleted) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ error: 'Product not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete product: ' + err.message });
+  }
+});
+
+// Health check endpoint for Render keep-alive
+app.get('/api/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// Start Server
+app.listen(PORT, () => {
+  console.log(`BandaMart backend server running on http://localhost:${PORT}`);
+
+  // Keep-alive self-ping for Render free tier (every 14 minutes)
+  const selfUrl = process.env.RENDER_EXTERNAL_URL || process.env.SELF_URL;
+  if (selfUrl) {
+    console.log(`Render keep-alive self-ping initialized for: ${selfUrl}`);
+    setInterval(async () => {
+      try {
+        const res = await fetch(`${selfUrl}/api/health`);
+        console.log(`Self-ping health check status: ${res.status} at ${new Date().toISOString()}`);
+      } catch (err) {
+        console.error('Self-ping failed:', err.message);
+      }
+    }, 14 * 60 * 1000); // 14 minutes
+  }
+});
