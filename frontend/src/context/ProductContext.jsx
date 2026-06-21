@@ -2,11 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ProductContext = createContext();
 
-export const API_BASE = import.meta.env.VITE_API_URL || (
-  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5000/api'
-    : '/api'
-);
+export const API_BASE = import.meta.env.VITE_API_URL || 'https://bandamart.onrender.com/api';
 
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
