@@ -8,12 +8,18 @@ import CartBar from '../components/CartBar';
 import { ProductGridSkeleton, SkeletonCategory, SkeletonBanner } from '../components/SkeletonLoader';
 import { APP_CONFIG, WHATSAPP_NUMBER } from '../data/sampleData';
 import Logo from '../components/Logo';
+import { optimizeImageUrl } from '../utils/image';
 
 const welcomeSlides = [
   {
     image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80",
     badge: "👋 Welcome to BandaMart",
     title: "Everything you need, in one place"
+  },
+  {
+    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop&q=80",
+    badge: "🚚 Flat Delivery",
+    title: "Sirf ₹20 Delivery! Kitne ke bhi order pe! 🎉"
   },
   {
     image: "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=800&auto=format&fit=crop&q=80",
@@ -63,11 +69,17 @@ export default function Home() {
           background: 'var(--surface)',
           borderBottom: '1px solid var(--outline-variant)',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
             <Logo size={32} />
-            <h1 className="text-headline-lg-mobile" style={{ color: 'var(--primary)', margin: 0 }}>
-              {APP_CONFIG.name}
-            </h1>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+              <h1 style={{ fontSize: '20px', fontWeight: 800, margin: 0, letterSpacing: '-0.03em' }}>
+                <span style={{ color: 'var(--primary)' }}>Band</span>
+                <span style={{ color: 'var(--on-background)' }}>Mart</span>
+              </h1>
+              <span style={{ fontSize: '9px', color: 'var(--outline)', fontWeight: 500, letterSpacing: '-0.01em' }}>
+                {APP_CONFIG.tagline}
+              </span>
+            </div>
           </div>
           <button
             onClick={() => navigate('/cart')}
@@ -188,11 +200,17 @@ export default function Home() {
         background: 'var(--surface)',
         borderBottom: '1px solid var(--outline-variant)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
           <Logo size={32} />
-          <h1 className="text-headline-lg-mobile" style={{ color: 'var(--primary)', margin: 0 }}>
-            {APP_CONFIG.name}
-          </h1>
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+            <h1 style={{ fontSize: '20px', fontWeight: 800, margin: 0, letterSpacing: '-0.03em' }}>
+              <span style={{ color: 'var(--primary)' }}>Band</span>
+              <span style={{ color: 'var(--on-background)' }}>Mart</span>
+            </h1>
+            <span style={{ fontSize: '9px', color: 'var(--outline)', fontWeight: 500, letterSpacing: '-0.01em' }}>
+              {APP_CONFIG.tagline}
+            </span>
+          </div>
         </div>
         <button
           onClick={() => navigate('/cart')}
@@ -329,33 +347,86 @@ export default function Home() {
           <div
             onClick={() => navigate('/search')}
             style={{
-              position: 'relative',
+              display: 'flex',
+              alignItems: 'stretch',
+              background: 'var(--surface-container-lowest)',
+              border: '1.5px solid var(--primary)',
+              borderRadius: 'var(--radius-xl)',
+              overflow: 'hidden',
               cursor: 'pointer',
+              height: 48,
             }}
           >
             <div style={{
-              position: 'absolute',
-              left: 'var(--space-md)',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              paddingLeft: 'var(--space-md)',
+              color: 'var(--outline)',
+              flexGrow: 1,
+              fontSize: 14,
             }}>
-              <span className="material-symbols-outlined" style={{ color: 'var(--outline)' }}>
+              <span className="material-symbols-outlined" style={{ color: 'var(--outline)', marginRight: 8, fontSize: 20 }}>
                 search
               </span>
+              <span style={{ color: 'var(--outline)', opacity: 0.8 }}>
+                Search for fruits, vegetables, grocery...
+              </span>
             </div>
+            <button
+              style={{
+                background: 'var(--primary)',
+                color: '#ffffff',
+                border: 'none',
+                padding: '0 20px',
+                fontWeight: 600,
+                fontSize: 14,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Search
+            </button>
+          </div>
+        </section>
+
+        {/* Delivery Badge Banner */}
+        <section style={{
+          width: '100%',
+          marginBottom: 'var(--space-xl)',
+          animation: 'fadeInUp 0.4s ease forwards',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-md)',
+            background: 'var(--primary-container)',
+            color: 'var(--on-primary-container)',
+            padding: 'var(--space-md)',
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: 'var(--shadow-sm)',
+            border: '1px solid rgba(132, 194, 37, 0.15)',
+          }}>
             <div style={{
-              width: '100%',
-              padding: '14px 16px 14px 48px',
-              background: 'var(--surface-container-lowest)',
-              border: '1px solid var(--outline-variant)',
-              borderRadius: 'var(--radius-xl)',
-              color: 'var(--on-surface-variant)',
-              opacity: 0.8,
-              fontSize: 15,
-              fontWeight: 500,
+              background: 'var(--primary)',
+              color: 'var(--on-primary)',
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
             }}>
-              Search products...
+              <span className="material-symbols-outlined filled" style={{ fontSize: 20 }}>local_shipping</span>
+            </div>
+            <div>
+              <p className="text-title-md" style={{ margin: 0, fontWeight: 700, fontSize: 14 }}>
+                Flat ₹20 Delivery! 🎉
+              </p>
+              <p className="text-body-md" style={{ margin: '2px 0 0', fontSize: 12, opacity: 0.9, lineHeight: 1.25 }}>
+                Sirf ₹20 kitne ke bhi order pe! No minimum purchase limits.
+              </p>
             </div>
           </div>
         </section>
@@ -401,7 +472,7 @@ export default function Home() {
                     justifyContent: 'center',
                   }}>
                     <img
-                      src={cat.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}
+                      src={optimizeImageUrl(cat.image, 120) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}
                       alt={cat.name}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
@@ -517,7 +588,38 @@ export default function Home() {
           )}
         </section>
 
-
+        {/* Footer */}
+        <footer style={{
+          textAlign: 'center',
+          padding: 'var(--space-xl) var(--container-padding)',
+          marginTop: 'var(--space-xl)',
+          borderTop: '1px solid var(--outline-variant)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 'var(--space-xs)',
+          opacity: 0.7,
+        }}>
+          <p className="text-label-sm" style={{ margin: 0, color: 'var(--on-surface-variant)', fontSize: 11 }}>
+            © 2026 BandMart — Sab kuch, sabke paas
+          </p>
+          <button 
+            onClick={() => navigate('/admin')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--primary)',
+              fontSize: '11px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              opacity: 0.5,
+              textDecoration: 'underline',
+              padding: '4px 8px',
+            }}
+          >
+            Staff Portal
+          </button>
+        </footer>
 
       </main>
 

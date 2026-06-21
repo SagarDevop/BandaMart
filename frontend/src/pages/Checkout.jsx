@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { WHATSAPP_NUMBER, APP_CONFIG } from '../data/sampleData';
+import { optimizeImageUrl } from '../utils/image';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -39,6 +40,9 @@ export default function Checkout() {
       `• ${item.name} – ${item.quantity} ${item.unit}`
     ).join('\n');
 
+    const deliveryCharge = APP_CONFIG.deliveryFee;
+    const finalTotal = totalPrice + deliveryCharge;
+
     const message = `Hello BandaMart,
 
 I would like to place an order:
@@ -50,7 +54,8 @@ I would like to place an order:
 🛒 *Products*:
 ${productLines}
 
-💵 *Total*: ${APP_CONFIG.currency}${totalPrice}
+🚚 *Delivery*: ₹${deliveryCharge} (Flat rate - Kitne ke bhi order pe! 🎉)
+💵 *Total*: ${APP_CONFIG.currency}${finalTotal}
 
 Please confirm availability and delivery time. Thank you!`;
 
@@ -168,14 +173,17 @@ Please confirm availability and delivery time. Thank you!`;
                 width: 48, height: 48, borderRadius: 'var(--radius-lg)',
                 overflow: 'hidden', background: 'var(--surface-container)',
               }}>
-                {items[0] && <img src={items[0].image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                {items[0] && <img src={optimizeImageUrl(items[0].image, 100) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
               </div>
               <div>
                 <p className="text-body-md" style={{ fontWeight: 600, margin: 0 }}>
                   {totalItems} items in cart
                 </p>
                 <p className="text-label-sm" style={{ color: 'var(--on-surface-variant)', margin: '2px 0 0' }}>
-                  Total: ₹{totalPrice}
+                  Subtotal: ₹{totalPrice} | Delivery: ₹{APP_CONFIG.deliveryFee}
+                </p>
+                <p className="text-title-md" style={{ color: 'var(--primary)', fontWeight: 700, margin: '4px 0 0' }}>
+                  Total: ₹{totalPrice + APP_CONFIG.deliveryFee} <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--on-surface-variant)' }}>(Flat Delivery)</span>
                 </p>
               </div>
             </div>

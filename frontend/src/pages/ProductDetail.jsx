@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
 import { APP_CONFIG } from '../data/sampleData';
+import { optimizeImageUrl } from '../utils/image';
 
 export default function ProductDetail() {
   const { productId } = useParams();
@@ -113,7 +114,7 @@ export default function ProductDetail() {
         maxHeight: 420,
       }}>
         <img
-          src={product.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500'}
+          src={optimizeImageUrl(product.image, 600) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500'}
           alt={product.name}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
@@ -341,7 +342,7 @@ export default function ProductDetail() {
                   marginBottom: 'var(--space-sm)',
                   background: 'var(--surface-container)',
                 }}>
-                  <img src={item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'} alt={item.name} loading="lazy"
+                  <img src={optimizeImageUrl(item.image, 200) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'} alt={item.name} loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <p className="text-title-md" style={{ fontSize: 13, color: 'var(--primary)', margin: 0 }}>

@@ -8,26 +8,26 @@
 
 /* --- CSS Custom Properties --- */
 :root {
-  /* Primary (Charcoal for premium e-commerce look) */
-  --primary: #121212;
+  /* Primary (BigBasket Fresh Green Theme) */
+  --primary: #84c225;
   --on-primary: #ffffff;
-  --primary-container: #1e1e1e;
-  --on-primary-container: #ffffff;
-  --primary-fixed: #e5e5e5;
-  --primary-fixed-dim: #cccccc;
-  --on-primary-fixed: #121212;
-  --on-primary-fixed-variant: #333333;
-  --inverse-primary: #ffffff;
+  --primary-container: #f4faf0;
+  --on-primary-container: #33691e;
+  --primary-fixed: #dcedc8;
+  --primary-fixed-dim: #c5e1a5;
+  --on-primary-fixed: #33691e;
+  --on-primary-fixed-variant: #689f38;
+  --inverse-primary: #c5e1a5;
 
-  /* Secondary (Subtle deep green organic accent) */
-  --secondary: #1a3e21;
+  /* Secondary (BigBasket Dark Green Accent) */
+  --secondary: #689f38;
   --on-secondary: #ffffff;
-  --secondary-container: #121212;
-  --on-secondary-container: #ffffff;
-  --secondary-fixed: #e2ede4;
-  --secondary-fixed-dim: #c5dbcb;
-  --on-secondary-fixed: #0b1a0e;
-  --on-secondary-fixed-variant: #122c17;
+  --secondary-container: #f1f8e9;
+  --on-secondary-container: #33691e;
+  --secondary-fixed: #dcedc8;
+  --secondary-fixed-dim: #c5e1a5;
+  --on-secondary-fixed: #33691e;
+  --on-secondary-fixed-variant: #689f38;
 
   /* Tertiary (Neutral grey) */
   --tertiary: #555555;
@@ -47,25 +47,25 @@
 
   /* Surface & Background */
   --background: #ffffff;
-  --on-background: #121212;
+  --on-background: #1e293b;
   --surface: #ffffff;
-  --on-surface: #121212;
-  --surface-variant: #f7f7f7;
-  --on-surface-variant: #555555;
-  --surface-dim: #eeeeee;
+  --on-surface: #1e293b;
+  --surface-variant: #f4fbf4;
+  --on-surface-variant: #3b5e3b;
+  --surface-dim: #f1f5f9;
   --surface-bright: #ffffff;
   --surface-container-lowest: #ffffff;
-  --surface-container-low: #fafafa;
-  --surface-container: #f5f5f5;
-  --surface-container-high: #eeeeee;
-  --surface-container-highest: #e5e5e5;
-  --surface-tint: #121212;
-  --inverse-surface: #121212;
+  --surface-container-low: #f8fafc;
+  --surface-container: #f1f5f9;
+  --surface-container-high: #e2e8f0;
+  --surface-container-highest: #cbd5e1;
+  --surface-tint: #388e3c;
+  --inverse-surface: #1e293b;
   --inverse-on-surface: #ffffff;
 
   /* Outline */
-  --outline: #888888;
-  --outline-variant: #e0e0e0;
+  --outline: #a1c97a;
+  --outline-variant: #f0f8e8;
 
   /* Spacing */
   --space-unit: 4px;

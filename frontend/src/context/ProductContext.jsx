@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CATEGORIES, PRODUCTS } from '../data/sampleData';
 
 const ProductContext = createContext();
 
-export const API_BASE = import.meta.env.VITE_API_URL || 'https://bandamart.onrender.com/api';
+export const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://bandamart.onrender.com/api');
 
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
@@ -12,6 +11,28 @@ export function ProductProvider({ children }) {
 
   useEffect(() => {
     async function initCatalog() {
+      // 1. Try to load from localStorage cache first
+      let cachedProds = null;
+      let cachedCats = null;
+      try {
+        const p = localStorage.getItem('bandamart_cache_products');
+        const c = localStorage.getItem('bandamart_cache_categories');
+        if (p && c) {
+          cachedProds = JSON.parse(p);
+          cachedCats = JSON.parse(c);
+        }
+      } catch (e) {
+        console.warn('Failed to read localStorage cache:', e);
+      }
+
+      // If we have cached data, render it immediately and hide the loader
+      if (cachedProds && cachedCats && cachedProds.length > 0 && cachedCats.length > 0) {
+        setProducts(cachedProds);
+        setCategories(cachedCats);
+        setLoading(false);
+      }
+
+      // 2. Revalidate in the background
       try {
         const [resProd, resCat] = await Promise.all([
           fetch(`${API_BASE}/products`),
@@ -21,22 +42,30 @@ export function ProductProvider({ children }) {
           let prods = await resProd.json();
           let cats = await resCat.json();
 
-          if (cats.length === 0) {
-            cats = CATEGORIES;
-          }
-          if (prods.length === 0) {
-            prods = PRODUCTS;
-          }
+          // Compare with cached data to avoid state updates and re-renders if nothing changed
+          const prodsStr = JSON.stringify(prods);
+          const catsStr = JSON.stringify(cats);
+          const cachedProdsStr = cachedProds ? JSON.stringify(cachedProds) : '';
+          const cachedCatsStr = cachedCats ? JSON.stringify(cachedCats) : '';
 
-          setProducts(prods);
-          setCategories(cats);
+          if (prodsStr !== cachedProdsStr || catsStr !== cachedCatsStr) {
+            setProducts(prods);
+            setCategories(cats);
+            
+            // Save to cache
+            localStorage.setItem('bandamart_cache_products', prodsStr);
+            localStorage.setItem('bandamart_cache_categories', catsStr);
+          }
         } else {
           throw new Error('API returned invalid status');
         }
       } catch (err) {
-        console.error('Failed to fetch catalog from backend, loading fallback sample data:', err);
-        setCategories(CATEGORIES);
-        setProducts(PRODUCTS);
+        console.error('Failed to fetch catalog from backend:', err);
+        // Only load blank arrays if we don't have any cached data at all
+        if (!cachedProds || !cachedCats) {
+          setCategories([]);
+          setProducts([]);
+        }
       } finally {
         setLoading(false);
       }
@@ -53,7 +82,11 @@ export function ProductProvider({ children }) {
       });
       if (res.ok) {
         const newProd = await res.json();
-        setProducts(prev => [newProd, ...prev]);
+        setProducts(prev => {
+          const updated = [newProd, ...prev];
+          localStorage.setItem('bandamart_cache_products', JSON.stringify(updated));
+          return updated;
+        });
         return newProd;
       }
     } catch (err) {
@@ -70,7 +103,11 @@ export function ProductProvider({ children }) {
       });
       if (res.ok) {
         const updated = await res.json();
-        setProducts(prev => prev.map(p => p.id === id ? updated : p));
+        setProducts(prev => {
+          const newProds = prev.map(p => p.id === id ? updated : p);
+          localStorage.setItem('bandamart_cache_products', JSON.stringify(newProds));
+          return newProds;
+        });
         return updated;
       }
     } catch (err) {
@@ -84,7 +121,11 @@ export function ProductProvider({ children }) {
         method: 'DELETE',
       });
       if (res.ok) {
-        setProducts(prev => prev.filter(p => p.id !== id));
+        setProducts(prev => {
+          const newProds = prev.filter(p => p.id !== id);
+          localStorage.setItem('bandamart_cache_products', JSON.stringify(newProds));
+          return newProds;
+        });
       }
     } catch (err) {
       console.error('Error deleting product:', err);
@@ -119,7 +160,11 @@ export function ProductProvider({ children }) {
       });
       if (res.ok) {
         const newCat = await res.json();
-        setCategories(prev => [...prev, newCat]);
+        setCategories(prev => {
+          const updated = [...prev, newCat];
+          localStorage.setItem('bandamart_cache_categories', JSON.stringify(updated));
+          return updated;
+        });
         return newCat;
       }
     } catch (err) {
@@ -136,7 +181,11 @@ export function ProductProvider({ children }) {
       });
       if (res.ok) {
         const updated = await res.json();
-        setCategories(prev => prev.map(c => c.id === id ? updated : c));
+        setCategories(prev => {
+          const newCats = prev.map(c => c.id === id ? updated : c);
+          localStorage.setItem('bandamart_cache_categories', JSON.stringify(newCats));
+          return newCats;
+        });
         return updated;
       }
     } catch (err) {
@@ -150,7 +199,11 @@ export function ProductProvider({ children }) {
         method: 'DELETE',
       });
       if (res.ok) {
-        setCategories(prev => prev.filter(c => c.id !== id));
+        setCategories(prev => {
+          const newCats = prev.filter(c => c.id !== id);
+          localStorage.setItem('bandamart_cache_categories', JSON.stringify(newCats));
+          return newCats;
+        });
       }
     } catch (err) {
       console.error('Error deleting category:', err);

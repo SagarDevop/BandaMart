@@ -95,10 +95,10 @@ export const WHATSAPP_NUMBER = '917388012187';
 
 // App configuration
 export const APP_CONFIG = {
-  name: 'BandaMart',
-  tagline: 'Sab Kuch, Ek Jagah',
+  name: 'BandMart',
+  tagline: 'Sab kuch, sabke paas',
   currency: '₹',
-  deliveryFee: 0,
-  deliveryText: 'FREE',
+  deliveryFee: 20,
+  deliveryText: '₹20 (Flat)',
   deliveryTime: '30-40 Mins'
 };

@@ -4,6 +4,7 @@ import { useProducts } from '../context/ProductContext';
 import BottomNav from '../components/BottomNav';
 import CartBar from '../components/CartBar';
 import TopAppBar from '../components/TopAppBar';
+import { optimizeImageUrl } from '../utils/image';
 
 export default function CategoryList() {
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ export default function CategoryList() {
                       flexShrink: 0,
                     }}>
                       <img
-                        src={category.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}
+                        src={optimizeImageUrl(category.image, 120) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}
                         alt={category.name}
                         style={{
                           width: '100%',

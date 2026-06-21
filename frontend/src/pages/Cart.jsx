@@ -4,6 +4,8 @@ import { useCart } from '../context/CartContext';
 import BottomNav from '../components/BottomNav';
 import TopAppBar from '../components/TopAppBar';
 import Logo from '../components/Logo';
+import { optimizeImageUrl } from '../utils/image';
+import { APP_CONFIG } from '../data/sampleData';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -127,7 +129,7 @@ export default function Cart() {
                 flexShrink: 0,
               }}>
                 <img
-                  src={item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'}
+                  src={optimizeImageUrl(item.image, 150) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'}
                   alt={item.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   loading="lazy"
@@ -203,9 +205,14 @@ export default function Cart() {
             <span className="text-body-lg" style={{ color: 'var(--on-surface-variant)' }}>Subtotal</span>
             <span className="text-body-lg" style={{ color: 'var(--on-surface)' }}>₹{totalPrice}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-md)' }}>
-            <span className="text-body-lg" style={{ color: 'var(--on-surface-variant)' }}>Delivery</span>
-            <span className="text-body-lg" style={{ color: 'var(--primary)', fontWeight: 600 }}>FREE</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-md)' }}>
+            <div>
+              <span className="text-body-lg" style={{ color: 'var(--on-surface-variant)', display: 'block' }}>Delivery</span>
+              <span style={{ fontSize: 11, color: 'var(--primary)', fontWeight: 600, display: 'block', marginTop: 2 }}>
+                Flat ₹20 (Sirf ₹20 kitne ke bhi order pe! 🔥)
+              </span>
+            </div>
+            <span className="text-body-lg" style={{ color: 'var(--on-surface)', fontWeight: 600 }}>₹{APP_CONFIG.deliveryFee}</span>
           </div>
           <div style={{
             paddingTop: 'var(--space-md)',
@@ -213,7 +220,7 @@ export default function Cart() {
             display: 'flex', justifyContent: 'space-between',
           }}>
             <span className="text-headline-lg-mobile" style={{ color: 'var(--on-surface)' }}>Total</span>
-            <span className="text-headline-lg-mobile" style={{ color: 'var(--primary)' }}>₹{totalPrice}</span>
+            <span className="text-headline-lg-mobile" style={{ color: 'var(--primary)' }}>₹{totalPrice + APP_CONFIG.deliveryFee}</span>
           </div>
         </div>
       </main>
