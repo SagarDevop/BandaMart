@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { ProductProvider } from './context/ProductContext';
 
@@ -18,19 +18,19 @@ import CategoryManager from './pages/admin/CategoryManager';
 
 function AdminRoute({ children }) {
   const admin = localStorage.getItem('bandamart_admin');
-  if (!admin) return <Navigate to="/admin/login" replace />;
+  if (!admin) return <Navigate to="/admin" replace />;
   try {
     const data = JSON.parse(admin);
-    if (!data.loggedIn) return <Navigate to="/admin/login" replace />;
+    if (!data.loggedIn) return <Navigate to="/admin" replace />;
   } catch {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/admin" replace />;
   }
   return children;
 }
 
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <ProductProvider>
         <CartProvider>
           <Routes>
@@ -44,7 +44,8 @@ export default function App() {
             <Route path="/search" element={<Search />} />
 
             {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/login" element={<Navigate to="/admin" replace />} />
             <Route path="/admin/dashboard" element={
               <AdminRoute><AdminDashboard /></AdminRoute>
             } />
@@ -60,6 +61,6 @@ export default function App() {
           </Routes>
         </CartProvider>
       </ProductProvider>
-    </HashRouter>
+    </BrowserRouter>
   );
 }

@@ -17,7 +17,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('bandamart_admin');
-    navigate('/admin/login');
+    navigate('/admin');
   };
 
   return (

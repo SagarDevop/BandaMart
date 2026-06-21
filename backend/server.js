@@ -4,8 +4,18 @@ import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import dns from 'dns';
 
 dotenv.config();
+
+// Resolve DNS resolution issues for MongoDB SRV records on some local networks
+if (process.env.MONGODB_URI && process.env.MONGODB_URI.startsWith('mongodb+srv')) {
+  try {
+    dns.setServers(['8.8.8.8', '8.8.4.4']);
+  } catch (err) {
+    console.warn('Failed to set custom DNS servers, using system defaults:', err.message);
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -5,12 +5,6 @@ export const CATEGORIES = [];
 
 export const PRODUCTS = [];
 
-// Admin credentials
-export const ADMIN_CREDENTIALS = {
-  username: 'banda_admin',
-  password: 'BandaMart@Launch2026!'
-};
-
 // WhatsApp business number
 export const WHATSAPP_NUMBER = '917388012187';
 

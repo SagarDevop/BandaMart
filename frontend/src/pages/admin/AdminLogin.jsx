@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE } from '../../context/ProductContext';
 import Logo from '../../components/Logo';
@@ -8,6 +8,18 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const admin = localStorage.getItem('bandamart_admin');
+    if (admin) {
+      try {
+        const data = JSON.parse(admin);
+        if (data.loggedIn) {
+          navigate('/admin/dashboard', { replace: true });
+        }
+      } catch (err) {}
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

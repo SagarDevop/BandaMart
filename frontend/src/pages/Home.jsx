@@ -42,14 +42,6 @@ export default function Home() {
               {APP_CONFIG.name}
             </h1>
           </div>
-          <button
-            onClick={() => navigate('/admin/login')}
-            style={{ padding: 'var(--space-xs)', opacity: 0.7 }}
-          >
-            <span className="material-symbols-outlined" style={{ color: 'var(--primary)' }}>
-              admin_panel_settings
-            </span>
-          </button>
         </header>
 
         <main style={{
@@ -112,23 +104,6 @@ export default function Home() {
               </svg>
               Contact on WhatsApp
             </a>
-            
-            <button
-              onClick={() => navigate('/admin/login')}
-              style={{
-                background: 'var(--surface-container-high)',
-                color: 'var(--primary)',
-                padding: '14px 20px',
-                borderRadius: 'var(--radius-xl)',
-                fontWeight: 700,
-                fontSize: 14,
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'background 0.2s',
-              }}
-            >
-              Store Admin Login
-            </button>
           </div>
         </main>
         <BottomNav />
@@ -155,14 +130,6 @@ export default function Home() {
             {APP_CONFIG.name}
           </h1>
         </div>
-        <button
-          onClick={() => navigate('/admin/login')}
-          style={{ padding: 'var(--space-xs)', opacity: 0.7 }}
-        >
-          <span className="material-symbols-outlined" style={{ color: 'var(--primary)' }}>
-            admin_panel_settings
-          </span>
-        </button>
       </header>
 
       <main style={{ padding: '0 var(--container-padding)' }}>
