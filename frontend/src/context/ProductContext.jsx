@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { CATEGORIES, PRODUCTS } from '../data/sampleData';
 
 const ProductContext = createContext();
 
@@ -9,7 +10,6 @@ export function ProductProvider({ children }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch initial catalog data
   useEffect(() => {
     async function initCatalog() {
       try {
@@ -21,12 +21,22 @@ export function ProductProvider({ children }) {
           let prods = await resProd.json();
           let cats = await resCat.json();
 
+          if (cats.length === 0) {
+            cats = CATEGORIES;
+          }
+          if (prods.length === 0) {
+            prods = PRODUCTS;
+          }
 
           setProducts(prods);
           setCategories(cats);
+        } else {
+          throw new Error('API returned invalid status');
         }
       } catch (err) {
-        console.error('Failed to fetch catalog from backend:', err);
+        console.error('Failed to fetch catalog from backend, loading fallback sample data:', err);
+        setCategories(CATEGORIES);
+        setProducts(PRODUCTS);
       } finally {
         setLoading(false);
       }
@@ -152,6 +162,10 @@ export function ProductProvider({ children }) {
   const getCategoryProductCount = (categoryId) =>
     products.filter(p => p.category === categoryId).length;
 
+  if (loading) {
+    return <CatalogSplash />;
+  }
+
   return (
     <ProductContext.Provider value={{
       products, categories, loading,
@@ -162,6 +176,80 @@ export function ProductProvider({ children }) {
     }}>
       {children}
     </ProductContext.Provider>
+  );
+}
+
+function CatalogSplash() {
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100dvh',
+      width: '100%',
+      maxWidth: 480,
+      margin: '0 auto',
+      background: 'var(--background)',
+      color: 'var(--primary)',
+      position: 'fixed',
+      inset: 0,
+      zIndex: 9999,
+      fontFamily: "'Inter', sans-serif",
+    }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 'var(--space-md)',
+        textAlign: 'center',
+        padding: 'var(--space-xl)',
+      }}>
+        {/* Brand Icon */}
+        <div style={{
+          width: 80,
+          height: 80,
+          borderRadius: 'var(--radius-xl)',
+          background: 'var(--primary)',
+          color: 'var(--on-primary)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 'var(--space-xs)',
+        }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 44 }}>
+            storefront
+          </span>
+        </div>
+
+        <h1 className="text-headline-xl" style={{ margin: 0, fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em' }}>
+          BandaMart
+        </h1>
+        <p className="text-body-md" style={{ color: 'var(--outline)', margin: 0, fontSize: 14 }}>
+          Sab Kuch, Ek Jagah
+        </p>
+
+        {/* Premium rotating loader */}
+        <span className="material-symbols-outlined animate-spin" style={{
+          color: 'var(--primary)',
+          fontSize: 28,
+          marginTop: 'var(--space-xl)',
+          display: 'inline-block',
+        }}>
+          progress_activity
+        </span>
+
+        <p className="text-label-sm" style={{
+          color: 'var(--outline)',
+          marginTop: 'var(--space-2xl)',
+          fontSize: 10,
+          letterSpacing: '0.05em',
+          textTransform: 'uppercase',
+        }}>
+          Connecting Banda's Farms to Your Home
+        </p>
+      </div>
+    </div>
   );
 }
 
