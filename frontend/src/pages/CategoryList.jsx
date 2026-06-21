@@ -37,77 +37,80 @@ export default function CategoryList() {
             </p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-            {categories.map((cat, i) => (
-              <div
-                key={cat.id}
-                onClick={() => navigate(`/category/${cat.id}`)}
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: 140,
-                  borderRadius: 'var(--radius-2xl)',
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  animation: `fadeInUp 0.4s ease ${i * 0.08}s forwards`,
-                  opacity: 0,
-                }}
-              >
-                <div style={{ position: 'absolute', inset: 0 }}>
-                  <img
-                    src={cat.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'}
-                    alt={cat.name}
-                    loading="lazy"
-                    style={{
-                      width: '100%', height: '100%', objectFit: 'cover',
-                      transition: 'transform 0.7s ease',
-                    }}
-                    onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
-                    onMouseLeave={e => e.target.style.transform = 'scale(1)'}
-                  />
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    background: 'linear-gradient(135deg, rgba(25,28,27,0.7), rgba(25,28,27,0.2))',
-                  }} />
-                </div>
-                <div style={{
-                  position: 'relative', zIndex: 1,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  padding: '0 var(--space-xl)',
-                }}>
-                  <div style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 'var(--radius-lg)',
-                    background: 'rgba(255,255,255,0.15)',
-                    backdropFilter: 'blur(8px)',
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0,
+          }}>
+            {categories.map((category) => {
+              const count = getCategoryProductCount(category.id);
+              return (
+                <div
+                  key={category.id}
+                  onClick={() => navigate(`/category/${category.id}`)}
+                  style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 'var(--space-sm)',
+                    justifyContent: 'space-between',
+                    padding: 'var(--space-md) 0',
+                    borderBottom: '1px solid var(--outline-variant)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-md)',
                   }}>
-                    <span className="material-symbols-outlined" style={{ color: 'white', fontSize: 24 }}>
-                      {cat.icon}
-                    </span>
+                    <div style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      border: '1px solid var(--outline-variant)',
+                      background: 'var(--surface-container-low)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}>
+                      <img
+                        src={category.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}
+                        alt={category.name}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-title-md" style={{
+                        color: 'var(--on-surface)',
+                        fontWeight: 600,
+                        margin: 0,
+                        fontSize: 15,
+                      }}>
+                        {category.name}
+                      </h3>
+                      <p className="text-body-md" style={{
+                        color: 'var(--outline)',
+                        fontSize: 12,
+                        marginTop: 2,
+                      }}>
+                        {count} {count === 1 ? 'Product' : 'Products'}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="text-headline-lg-mobile" style={{
-                    color: 'white',
-                    margin: 0,
+                  <span className="material-symbols-outlined" style={{
+                    color: 'var(--outline)',
+                    fontSize: 20,
                   }}>
-                    {cat.name}
-                  </h3>
-                  <p className="text-label-sm" style={{
-                    color: 'rgba(255,255,255,0.8)',
-                    margin: '2px 0 0',
-                  }}>
-                    {getCategoryProductCount(cat.id)} Products
-                  </p>
+                    chevron_right
+                  </span>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>

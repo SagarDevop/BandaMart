@@ -31,18 +31,12 @@ export default function ProductCard({ product, compact = false }) {
       style={{
         background: 'var(--surface-container-lowest)',
         borderRadius: 'var(--radius-xl)',
-        boxShadow: 'var(--shadow-md)',
-        border: '1px solid rgba(194, 201, 187, 0.2)',
+        border: '1px solid var(--outline-variant)',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         cursor: 'pointer',
-        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-        animation: 'fadeInUp 0.4s ease forwards',
       }}
-      onPointerDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
-      onPointerUp={e => e.currentTarget.style.transform = 'scale(1)'}
-      onPointerLeave={e => e.currentTarget.style.transform = 'scale(1)'}
     >
       {/* Image */}
       <div style={{
@@ -60,10 +54,7 @@ export default function ProductCard({ product, compact = false }) {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            transition: 'transform 0.5s ease',
           }}
-          onMouseEnter={e => e.target.style.transform = 'scale(1.08)'}
-          onMouseLeave={e => e.target.style.transform = 'scale(1)'}
         />
         {!product.available && (
           <div style={{
@@ -116,8 +107,8 @@ export default function ProductCard({ product, compact = false }) {
                 width: '100%',
                 padding: compact ? '6px' : '8px',
                 borderRadius: 'var(--radius-xl)',
-                background: justAdded ? 'var(--primary-container)' : 'var(--secondary-container)',
-                color: justAdded ? 'var(--on-primary-container)' : 'var(--on-secondary-container)',
+                background: justAdded ? 'var(--secondary)' : 'var(--primary)',
+                color: 'var(--on-primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -125,7 +116,6 @@ export default function ProductCard({ product, compact = false }) {
                 fontWeight: 600,
                 fontSize: 12,
                 letterSpacing: '0.05em',
-                transition: 'all 0.2s ease',
                 opacity: product.available ? 1 : 0.5,
               }}
             >
@@ -140,7 +130,7 @@ export default function ProductCard({ product, compact = false }) {
               alignItems: 'center',
               justifyContent: 'space-between',
               background: 'var(--surface-container-high)',
-              borderRadius: 'var(--radius-full)',
+              borderRadius: 'var(--radius-xl)',
               padding: '4px',
             }}>
               <button
@@ -148,16 +138,13 @@ export default function ProductCard({ product, compact = false }) {
                 style={{
                   width: 28,
                   height: 28,
-                  borderRadius: '50%',
+                  borderRadius: 'var(--radius-sm)',
                   background: 'var(--surface-container-highest)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'var(--on-surface-variant)',
-                  transition: 'transform 0.15s',
                 }}
-                onPointerDown={e => e.currentTarget.style.transform = 'scale(0.85)'}
-                onPointerUp={e => e.currentTarget.style.transform = 'scale(1)'}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>remove</span>
               </button>
@@ -175,16 +162,13 @@ export default function ProductCard({ product, compact = false }) {
                 style={{
                   width: 28,
                   height: 28,
-                  borderRadius: '50%',
+                  borderRadius: 'var(--radius-sm)',
                   background: 'var(--primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'var(--on-primary)',
-                  transition: 'transform 0.15s',
                 }}
-                onPointerDown={e => e.currentTarget.style.transform = 'scale(0.85)'}
-                onPointerUp={e => e.currentTarget.style.transform = 'scale(1)'}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
               </button>

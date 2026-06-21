@@ -22,8 +22,10 @@ export function ProductProvider({ children }) {
           fetch(`${API_BASE}/categories`)
         ]);
         if (resProd.ok && resCat.ok) {
-          const prods = await resProd.json();
-          const cats = await resCat.json();
+          let prods = await resProd.json();
+          let cats = await resCat.json();
+
+
           setProducts(prods);
           setCategories(cats);
         }

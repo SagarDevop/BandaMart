@@ -10,6 +10,7 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Search from './pages/Search';
+import About from './pages/About';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/about" element={<About />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLogin />} />

@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { WHATSAPP_NUMBER } from '../data/sampleData';
 
 const tabs = [
   { id: 'home', label: 'Home', icon: 'home', path: '/' },
   { id: 'categories', label: 'Categories', icon: 'grid_view', path: '/categories' },
-  { id: 'cart', label: 'Cart', icon: 'shopping_cart', path: '/cart' },
+  { id: 'about', label: 'About Us', icon: 'info', path: '/about' },
   { id: 'contact', label: 'Contact', icon: 'chat_bubble', path: '/contact' },
 ];
 
@@ -13,6 +14,39 @@ export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
   const { totalItems } = useCart();
+
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const scrollThreshold = 10;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Prevent negative values (rubber banding on iOS)
+      if (currentScrollY < 0) return;
+
+      // Always show at the very top of the page
+      if (currentScrollY < 50) {
+        setVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      const diff = Math.abs(currentScrollY - lastScrollY.current);
+      if (diff > scrollThreshold) {
+        if (currentScrollY > lastScrollY.current) {
+          setVisible(false);
+        } else {
+          setVisible(true);
+        }
+        lastScrollY.current = currentScrollY;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const currentPath = location.pathname;
 
@@ -26,7 +60,7 @@ export default function BottomNav() {
       position: 'fixed',
       bottom: 0,
       left: '50%',
-      transform: 'translateX(-50%)',
+      transform: visible ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(120%)',
       width: '100%',
       maxWidth: 480,
       zIndex: 'var(--z-nav)',
@@ -37,6 +71,7 @@ export default function BottomNav() {
       background: 'var(--surface-container-lowest)',
       boxShadow: 'var(--shadow-top)',
       borderRadius: '16px 16px 0 0',
+      transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
     }}>
       {tabs.map(tab => {
         const active = isActive(tab.path);
@@ -45,7 +80,7 @@ export default function BottomNav() {
             key={tab.id}
             onClick={() => {
               if (tab.id === 'contact') {
-                window.open('https://wa.me/1234567890', '_blank');
+                window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank');
               } else {
                 navigate(tab.path);
               }
@@ -56,10 +91,9 @@ export default function BottomNav() {
               alignItems: 'center',
               justifyContent: 'center',
               padding: '4px 16px',
-              borderRadius: active ? 'var(--radius-full)' : 'var(--radius-lg)',
-              background: active ? 'var(--secondary-container)' : 'transparent',
-              color: active ? 'var(--on-secondary-container)' : 'var(--on-surface-variant)',
-              transition: 'all 0.2s ease',
+              borderRadius: 'var(--radius-sm)',
+              background: 'transparent',
+              color: active ? 'var(--primary)' : 'var(--on-surface-variant)',
               position: 'relative',
               minWidth: 56,
             }}
