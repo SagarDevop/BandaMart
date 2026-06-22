@@ -85,7 +85,7 @@ export default function Logo({ type = 'mark', size = 40, style = {} }) {
         margin: '12px 0 2px',
         letterSpacing: '-0.02em',
       }}>
-        <span style={{ color: 'var(--primary)' }}>Band</span>
+        <span style={{ color: 'var(--primary)' }}>Banda</span>
         <span style={{ color: 'var(--on-background)' }}>Mart</span>
       </h2>
       <p style={{

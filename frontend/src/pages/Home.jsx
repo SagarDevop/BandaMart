@@ -73,7 +73,7 @@ export default function Home() {
             <Logo size={32} />
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
               <h1 style={{ fontSize: '20px', fontWeight: 800, margin: 0, letterSpacing: '-0.03em' }}>
-                <span style={{ color: 'var(--primary)' }}>Band</span>
+                <span style={{ color: 'var(--primary)' }}>Banda</span>
                 <span style={{ color: 'var(--on-background)' }}>Mart</span>
               </h1>
               <span style={{ fontSize: '9px', color: 'var(--outline)', fontWeight: 500, letterSpacing: '-0.01em' }}>
@@ -204,7 +204,7 @@ export default function Home() {
           <Logo size={32} />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
             <h1 style={{ fontSize: '20px', fontWeight: 800, margin: 0, letterSpacing: '-0.03em' }}>
-              <span style={{ color: 'var(--primary)' }}>Band</span>
+              <span style={{ color: 'var(--primary)' }}>Banda</span>
               <span style={{ color: 'var(--on-background)' }}>Mart</span>
             </h1>
             <span style={{ fontSize: '9px', color: 'var(--outline)', fontWeight: 500, letterSpacing: '-0.01em' }}>
@@ -601,7 +601,7 @@ export default function Home() {
           opacity: 0.7,
         }}>
           <p className="text-label-sm" style={{ margin: 0, color: 'var(--on-surface-variant)', fontSize: 11 }}>
-            © 2026 BandMart — Sab kuch, sabke paas
+            © 2026 BandaMart — Sab kuch, sabke paas
           </p>
           <button 
             onClick={() => navigate('/admin')}

@@ -95,7 +95,7 @@ export const WHATSAPP_NUMBER = '918957471581';
 
 // App configuration
 export const APP_CONFIG = {
-  name: 'BandMart',
+  name: 'BandaMart',
   tagline: 'Sab kuch, sabke paas',
   currency: '₹',
   deliveryFee: 20,

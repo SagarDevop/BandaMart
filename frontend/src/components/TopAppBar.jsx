@@ -49,10 +49,10 @@ export default function TopAppBar({
             </span>
           </button>
         )}
-        {title === 'BandaMart' || title === 'BandMart' ? (
+        {title === 'BandaMart' || title === 'BandaMart' ? (
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
             <h1 style={{ fontSize: '20px', fontWeight: 800, margin: 0, letterSpacing: '-0.03em' }}>
-              <span style={{ color: 'var(--primary)' }}>Band</span>
+              <span style={{ color: 'var(--primary)' }}>Banda</span>
               <span style={{ color: 'var(--on-background)' }}>Mart</span>
             </h1>
             <span style={{ fontSize: '9px', color: 'var(--outline)', fontWeight: 500, letterSpacing: '-0.01em' }}>

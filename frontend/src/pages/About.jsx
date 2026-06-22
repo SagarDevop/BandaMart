@@ -207,7 +207,7 @@ export default function About() {
           opacity: 0.7,
         }}>
           <p className="text-label-sm" style={{ margin: 0, color: 'var(--on-surface-variant)', fontSize: 11 }}>
-            © 2026 BandMart — Sab kuch, sabke paas
+            © 2026 BandaMart — Sab kuch, sabke paas
           </p>
           <button 
             onClick={() => navigate('/admin')}
