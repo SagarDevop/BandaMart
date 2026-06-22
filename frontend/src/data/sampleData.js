@@ -91,7 +91,7 @@ export const PRODUCTS = [
 ];
 
 // WhatsApp business number
-export const WHATSAPP_NUMBER = '917388012187';
+export const WHATSAPP_NUMBER = '918957471581';
 
 // App configuration
 export const APP_CONFIG = {

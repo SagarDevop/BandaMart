@@ -111,7 +111,7 @@ export default function AdminDashboard() {
           Quick Actions
         </h3>
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
           gap: 'var(--space-md)', marginBottom: 'var(--space-xl)',
         }}>
           <button
@@ -149,6 +149,24 @@ export default function AdminDashboard() {
           >
             <span className="material-symbols-outlined" style={{ fontSize: 28 }}>category</span>
             Manage Categories
+          </button>
+          <button
+            onClick={() => navigate('/admin/settings')}
+            style={{
+              padding: 'var(--space-lg)',
+              background: 'var(--tertiary-container)',
+              color: 'var(--on-tertiary-container)',
+              borderRadius: 'var(--radius-xl)',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', gap: 'var(--space-sm)',
+              fontWeight: 600, fontSize: 14,
+              transition: 'transform 0.2s',
+            }}
+            onPointerDown={e => e.currentTarget.style.transform = 'scale(0.96)'}
+            onPointerUp={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 28 }}>settings</span>
+            Manage Settings
           </button>
         </div>
 

@@ -64,6 +64,13 @@ productSchema.index({ createdAt: -1 });
 
 const Product = mongoose.model('Product', productSchema);
 
+const settingSchema = new mongoose.Schema({
+  key: { type: String, required: true, unique: true },
+  value: { type: String, required: true }
+}, { timestamps: true });
+
+const Setting = mongoose.model('Setting', settingSchema);
+
 // Database seeding removed for clean store admin setup
 
 // Multer in-memory storage configuration
@@ -163,6 +170,48 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
   );
 
   stream.end(req.file.buffer);
+});
+
+// Settings Endpoints
+app.get('/api/settings', async (req, res) => {
+  try {
+    const settings = await Setting.find();
+    const settingsMap = {};
+    settings.forEach(s => {
+      settingsMap[s.key] = s.value;
+    });
+    // Fallback/default if not set in MongoDB
+    if (!settingsMap.whatsapp_number) {
+      settingsMap.whatsapp_number = '918957471581';
+    }
+    res.json(settingsMap);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch settings: ' + err.message });
+  }
+});
+
+app.post('/api/settings', async (req, res) => {
+  const { key, value } = req.body;
+  if (!key || value === undefined) {
+    return res.status(400).json({ error: 'Key and value are required' });
+  }
+  try {
+    let sanitizedValue = value;
+    if (key === 'whatsapp_number') {
+      sanitizedValue = value.replace(/\D/g, ''); // strip out non-digits
+      if (!sanitizedValue) {
+        return res.status(400).json({ error: 'Invalid WhatsApp number. It must contain digits.' });
+      }
+    }
+    const updated = await Setting.findOneAndUpdate(
+      { key },
+      { value: sanitizedValue },
+      { new: true, upsert: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update setting: ' + err.message });
+  }
 });
 
 // Categories Endpoints

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { WHATSAPP_NUMBER, APP_CONFIG } from '../data/sampleData';
+import { useProducts } from '../context/ProductContext';
+import { APP_CONFIG } from '../data/sampleData';
 import { optimizeImageUrl } from '../utils/image';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, totalPrice, totalItems, clearCart } = useCart();
+  const { whatsappNumber } = useProducts();
   const [form, setForm] = useState({ name: '', phone: '', address: '' });
   const [errors, setErrors] = useState({});
   const [sending, setSending] = useState(false);
@@ -60,7 +62,7 @@ ${productLines}
 Please confirm availability and delivery time. Thank you!`;
 
     const encoded = encodeURIComponent(message);
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+    const url = `https://wa.me/${whatsappNumber}?text=${encoded}`;
 
     setTimeout(() => {
       clearCart();

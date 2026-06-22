@@ -6,7 +6,7 @@ import ProductCard from '../components/ProductCard';
 import BottomNav from '../components/BottomNav';
 import CartBar from '../components/CartBar';
 import { ProductGridSkeleton, SkeletonCategory, SkeletonBanner } from '../components/SkeletonLoader';
-import { APP_CONFIG, WHATSAPP_NUMBER } from '../data/sampleData';
+import { APP_CONFIG } from '../data/sampleData';
 import Logo from '../components/Logo';
 import { optimizeImageUrl } from '../utils/image';
 
@@ -40,7 +40,7 @@ const welcomeSlides = [
 
 export default function Home() {
   const navigate = useNavigate();
-  const { categories, getFeaturedProducts, getCategoryProductCount } = useProducts();
+  const { categories, getFeaturedProducts, getCategoryProductCount, whatsappNumber } = useProducts();
   const { totalItems } = useCart();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -152,7 +152,7 @@ export default function Home() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)', width: '100%', maxWidth: 280 }}>
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              href={`https://wa.me/${whatsappNumber}`}
               target="_blank"
               rel="noopener noreferrer"
               className="ripple"

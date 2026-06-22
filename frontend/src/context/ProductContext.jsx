@@ -7,6 +7,7 @@ export const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [whatsappNumber, setWhatsappNumber] = useState('918957471581');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,12 +15,17 @@ export function ProductProvider({ children }) {
       // 1. Try to load from localStorage cache first
       let cachedProds = null;
       let cachedCats = null;
+      let cachedWhatsapp = '918957471581';
       try {
         const p = localStorage.getItem('bandamart_cache_products');
         const c = localStorage.getItem('bandamart_cache_categories');
+        const w = localStorage.getItem('bandamart_cache_whatsapp');
         if (p && c) {
           cachedProds = JSON.parse(p);
           cachedCats = JSON.parse(c);
+        }
+        if (w) {
+          cachedWhatsapp = w;
         }
       } catch (e) {
         console.warn('Failed to read localStorage cache:', e);
@@ -29,18 +35,30 @@ export function ProductProvider({ children }) {
       if (cachedProds && cachedCats && cachedProds.length > 0 && cachedCats.length > 0) {
         setProducts(cachedProds);
         setCategories(cachedCats);
+        setWhatsappNumber(cachedWhatsapp);
         setLoading(false);
       }
 
       // 2. Revalidate in the background
       try {
-        const [resProd, resCat] = await Promise.all([
+        const [resProd, resCat, resSettings] = await Promise.all([
           fetch(`${API_BASE}/products`),
-          fetch(`${API_BASE}/categories`)
+          fetch(`${API_BASE}/categories`),
+          fetch(`${API_BASE}/settings`).catch(err => {
+            console.warn('Failed to fetch settings from backend:', err);
+            return { ok: false };
+          })
         ]);
         if (resProd.ok && resCat.ok) {
           let prods = await resProd.json();
           let cats = await resCat.json();
+          let whatsapp = '918957471581';
+          if (resSettings && resSettings.ok) {
+            const settings = await resSettings.json();
+            if (settings.whatsapp_number) {
+              whatsapp = settings.whatsapp_number;
+            }
+          }
 
           // Compare with cached data to avoid state updates and re-renders if nothing changed
           const prodsStr = JSON.stringify(prods);
@@ -48,13 +66,15 @@ export function ProductProvider({ children }) {
           const cachedProdsStr = cachedProds ? JSON.stringify(cachedProds) : '';
           const cachedCatsStr = cachedCats ? JSON.stringify(cachedCats) : '';
 
-          if (prodsStr !== cachedProdsStr || catsStr !== cachedCatsStr) {
+          if (prodsStr !== cachedProdsStr || catsStr !== cachedCatsStr || whatsapp !== cachedWhatsapp) {
             setProducts(prods);
             setCategories(cats);
+            setWhatsappNumber(whatsapp);
             
             // Save to cache
             localStorage.setItem('bandamart_cache_products', prodsStr);
             localStorage.setItem('bandamart_cache_categories', catsStr);
+            localStorage.setItem('bandamart_cache_whatsapp', whatsapp);
           }
         } else {
           throw new Error('API returned invalid status');
@@ -215,13 +235,36 @@ export function ProductProvider({ children }) {
   const getCategoryProductCount = (categoryId) =>
     products.filter(p => p.category === categoryId).length;
 
+  const updateWhatsappNumber = async (number) => {
+    try {
+      const res = await fetch(`${API_BASE}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'whatsapp_number', value: number }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        const cleanVal = updated.value;
+        setWhatsappNumber(cleanVal);
+        localStorage.setItem('bandamart_cache_whatsapp', cleanVal);
+        return cleanVal;
+      } else {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to update WhatsApp number');
+      }
+    } catch (err) {
+      console.error('Error updating WhatsApp number:', err);
+      throw err;
+    }
+  };
+
   if (loading) {
     return <CatalogSplash />;
   }
 
   return (
     <ProductContext.Provider value={{
-      products, categories, loading,
+      products, categories, loading, whatsappNumber, updateWhatsappNumber,
       addProduct, updateProduct, deleteProduct, getProduct,
       getProductsByCategory, getFeaturedProducts, searchProducts,
       addCategory, updateCategory, deleteCategory, getCategory,

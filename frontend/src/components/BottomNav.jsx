@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { WHATSAPP_NUMBER } from '../data/sampleData';
+import { useProducts } from '../context/ProductContext';
 
 const tabs = [
   { id: 'home', label: 'Home', icon: 'home', path: '/' },
@@ -14,6 +14,7 @@ export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
   const { totalItems } = useCart();
+  const { whatsappNumber } = useProducts();
 
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -80,7 +81,7 @@ export default function BottomNav() {
             key={tab.id}
             onClick={() => {
               if (tab.id === 'contact') {
-                window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank');
+                window.open(`https://wa.me/${whatsappNumber}`, '_blank');
               } else {
                 navigate(tab.path);
               }

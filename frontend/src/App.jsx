@@ -16,6 +16,7 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProductManager from './pages/admin/ProductManager';
 import CategoryManager from './pages/admin/CategoryManager';
+import SettingsManager from './pages/admin/SettingsManager';
 
 function AdminRoute({ children }) {
   const admin = localStorage.getItem('bandamart_admin');
@@ -56,6 +57,9 @@ export default function App() {
             } />
             <Route path="/admin/categories" element={
               <AdminRoute><CategoryManager /></AdminRoute>
+            } />
+            <Route path="/admin/settings" element={
+              <AdminRoute><SettingsManager /></AdminRoute>
             } />
 
             {/* Fallback */}
