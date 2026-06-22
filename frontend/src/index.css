@@ -239,6 +239,43 @@ ul, ol {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+/* Shimmer animation for icon skeletons */
+@keyframes icon-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Premium skeleton placeholder styling before the font finishes loading */
+html:not(.icons-loaded) .material-symbols-outlined {
+  color: transparent !important;
+  background: linear-gradient(
+    90deg,
+    var(--surface-container, #f1f5f9) 25%,
+    var(--surface-container-high, #e2e8f0) 50%,
+    var(--surface-container, #f1f5f9) 75%
+  );
+  background-size: 200% 100%;
+  animation: icon-shimmer 1.5s infinite linear;
+  border-radius: var(--radius-md, 4px);
+  width: 1em;
+  height: 1em;
+  min-width: 1em;
+  min-height: 1em;
+  position: relative;
+  overflow: hidden;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Ensure any nested text or elements are completely hidden */
+html:not(.icons-loaded) .material-symbols-outlined * {
+  visibility: hidden !important;
+}
+
 /* --- Utility Classes --- */
 
 /* Scrollbar hiding */

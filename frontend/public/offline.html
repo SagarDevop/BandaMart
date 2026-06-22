@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BandaMart — Offline</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -32,11 +31,6 @@
       justify-content: center;
       margin-bottom: 24px;
     }
-    .material-symbols-outlined {
-      font-size: 48px;
-      color: #9dd090;
-      font-variation-settings: 'FILL' 1;
-    }
     h1 { font-size: 24px; font-weight: 700; color: #154212; margin-bottom: 8px; }
     p { font-size: 16px; color: #42493e; line-height: 1.6; margin-bottom: 24px; }
     .retry-btn {
@@ -53,12 +47,21 @@
 <body>
   <div class="container">
     <div class="icon-circle">
-      <span class="material-symbols-outlined">wifi_off</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 48px; height: 48px; color: #9dd090;">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.5"></path>
+        <path d="M5 12.5a10.94 10.94 0 0 1 5.83-2.84"></path>
+        <path d="M7.06 7.06A16 16 0 0 1 22 4"></path>
+        <path d="M1.66 4.34A16 16 0 0 1 12 2a15.89 15.89 0 0 1 7.26 1.74"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
     </div>
     <h1>You're Offline</h1>
     <p>It looks like you've lost your internet connection. Please check your network and try again.</p>
     <button class="retry-btn" onclick="window.location.reload()">
-      <span class="material-symbols-outlined" style="font-size:20px; font-variation-settings:'FILL' 0">refresh</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; flex-shrink: 0;">
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+      </svg>
       Try Again
     </button>
   </div>
