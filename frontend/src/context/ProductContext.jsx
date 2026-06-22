@@ -325,15 +325,17 @@ function CatalogSplash() {
           Sab Kuch, Ek Jagah
         </p>
 
-        {/* Premium rotating loader */}
-        <span className="material-symbols-outlined animate-spin" style={{
-          color: 'var(--primary)',
-          fontSize: 28,
+        {/* Premium CSS-only rotating spinner (no text fallback to prevent spinning text) */}
+        <div className="animate-spin" style={{
+          width: 28,
+          height: 28,
+          border: '3px solid var(--outline-variant)',
+          borderTop: '3px solid var(--primary)',
+          borderRadius: '50%',
           marginTop: 'var(--space-xl)',
           display: 'inline-block',
-        }}>
-          progress_activity
-        </span>
+          boxSizing: 'border-box',
+        }} />
 
         <p className="text-label-sm" style={{
           color: 'var(--outline)',
