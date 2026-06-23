@@ -78,27 +78,27 @@
   --container-padding: 20px;
   --grid-gutter: 16px;
 
-  /* Border Radius (Sharp & modern) */
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 4px;
-  --radius-xl: 4px;
-  --radius-2xl: 4px;
-  --radius-3xl: 4px;
-  --radius-full: 4px;
+  /* Border Radius (Round & premium) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
 
-  /* Shadows (Removed for minimal flat aesthetic) */
-  --shadow-sm: none;
-  --shadow-md: none;
-  --shadow-lg: none;
-  --shadow-xl: 0 4px 20px rgba(0,0,0,0.04);
-  --shadow-top: 0 -1px 0 rgba(0,0,0,0.06);
+  /* Shadows (Subtle & organic) */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-xl: 0 12px 32px rgba(0,0,0,0.1);
+  --shadow-top: 0 -2px 10px rgba(0,0,0,0.04);
 
-  /* Transitions (Disabled for instant feedback) */
-  --transition-fast: 0s;
-  --transition-normal: 0s;
-  --transition-slow: 0s;
-  --transition-spring: 0s;
+  /* Transitions (Smooth & premium) */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.35s ease;
+  --transition-spring: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   /* Z-index layers */
   --z-base: 1;

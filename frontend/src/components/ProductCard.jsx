@@ -52,7 +52,7 @@ export default function ProductCard({ product, compact = false }) {
       }}
     >
       {/* Express Delivery Badge */}
-      {product.featured && (
+      {product.featured && !compact && (
         <div style={{
           position: 'absolute',
           top: 8,
@@ -81,8 +81,8 @@ export default function ProductCard({ product, compact = false }) {
         width: '100%',
         aspectRatio: '1.2',
         overflow: 'hidden',
-        background: 'var(--surface-container-low)',
-        borderBottom: '1px solid var(--outline-variant)',
+        background: '#ffffff',
+        borderBottom: '1.5px solid var(--outline-variant)',
       }}>
         <img
           src={optimizeImageUrl(product.image, 300) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200'}
@@ -91,7 +91,8 @@ export default function ProductCard({ product, compact = false }) {
           style={{
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
+            objectFit: 'contain',
+            padding: '8px',
           }}
         />
         {!product.available && (
@@ -114,63 +115,68 @@ export default function ProductCard({ product, compact = false }) {
 
       {/* Info */}
       <div style={{
-        padding: '12px',
+        padding: '10px 12px 12px',
         display: 'flex',
         flexDirection: 'column',
         flexGrow: 1,
+        background: '#ffffff',
       }}>
-        {/* Pack Size / Unit */}
-        <span style={{
-          fontSize: '11px',
-          color: 'var(--outline)',
-          fontWeight: 600,
-          display: 'block',
-          marginBottom: '4px',
-          letterSpacing: '0.02em',
-        }}>
-          {product.unit}
-        </span>
-
         {/* Title */}
         <h4 style={{
           color: 'var(--on-surface)',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
-          margin: 0,
-          fontSize: compact ? 13 : 15,
+          margin: '0 0 2px 0',
+          fontSize: compact ? 12.5 : 15,
           fontWeight: 700,
-          lineHeight: 1.2,
+          lineHeight: 1.25,
           fontFamily: "'Inter', sans-serif",
         }}>
           {product.name}
         </h4>
 
+        {/* Pack Size / Unit */}
+        <span style={{
+          fontSize: '10px',
+          color: 'var(--outline)',
+          fontWeight: 500,
+          display: 'block',
+          marginBottom: '6px',
+          color: '#888888',
+        }}>
+          {product.unit}
+        </span>
+
         {/* Price & Discount */}
         <div style={{
-          margin: '10px 0 14px',
+          margin: '0 0 10px',
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
           flexWrap: 'wrap',
         }}>
-          <span style={{ fontWeight: 800, color: 'var(--on-surface)', fontSize: compact ? 14 : 16 }}>
+          <span style={{ fontWeight: 800, color: 'var(--on-surface)', fontSize: compact ? 13.5 : 16 }}>
             ₹{product.price}
           </span>
-          <span style={{ textDecoration: 'line-through', fontSize: compact ? 10 : 12, color: 'var(--outline)', opacity: 0.8 }}>
-            ₹{originalPrice}
-          </span>
-          <span style={{
-            fontSize: '9px',
-            background: 'var(--primary-container)',
-            color: 'var(--on-primary-container)',
-            padding: '2px 5px',
-            borderRadius: '3px',
-            fontWeight: 800,
-            marginLeft: 'auto',
-          }}>
-            {discountPercent}% OFF
-          </span>
+          {!compact && (
+            <>
+              <span style={{ textDecoration: 'line-through', fontSize: 12, color: 'var(--outline)', opacity: 0.8 }}>
+                ₹{originalPrice}
+              </span>
+              <span style={{
+                fontSize: '9px',
+                background: 'var(--primary-container)',
+                color: 'var(--on-primary-container)',
+                padding: '2px 5px',
+                borderRadius: '3px',
+                fontWeight: 800,
+                marginLeft: 'auto',
+              }}>
+                {discountPercent}% OFF
+              </span>
+            </>
+          )}
         </div>
 
         {/* Add / Stepper */}
@@ -181,7 +187,7 @@ export default function ProductCard({ product, compact = false }) {
               disabled={!product.available}
               style={{
                 width: '100%',
-                padding: compact ? '6px 12px' : '8px 16px',
+                padding: compact ? '6px 10px' : '8px 16px',
                 borderRadius: 'var(--radius-md)',
                 background: '#ffffff',
                 border: '1.5px solid var(--primary)',
@@ -189,20 +195,15 @@ export default function ProductCard({ product, compact = false }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '4px',
-                fontWeight: 800,
-                fontSize: 13,
+                fontWeight: 700,
+                fontSize: compact ? 11.5 : 13,
                 opacity: product.available ? 1 : 0.5,
-                boxShadow: '0 2px 4px rgba(0,0,0,0.01)',
                 transition: 'all 0.15s ease',
               }}
               onPointerDown={e => e.currentTarget.style.background = 'var(--primary-container)'}
               onPointerUp={e => e.currentTarget.style.background = '#ffffff'}
             >
-              ADD
-              <span className="material-symbols-outlined" style={{ fontSize: 16, fontWeight: 'bold' }}>
-                add
-              </span>
+              Add to Cart
             </button>
           ) : (
             <div style={{
@@ -213,13 +214,13 @@ export default function ProductCard({ product, compact = false }) {
               border: '1.5px solid var(--primary)',
               borderRadius: 'var(--radius-md)',
               padding: '2px',
-              height: compact ? 31 : 37,
+              height: compact ? 30 : 37,
             }}>
               <button
                 onClick={handleDecrement}
                 style={{
-                  width: compact ? 24 : 30,
-                  height: compact ? 24 : 30,
+                  width: compact ? 22 : 30,
+                  height: compact ? 22 : 30,
                   borderRadius: 'var(--radius-sm)',
                   background: 'var(--primary-container)',
                   display: 'flex',
@@ -229,12 +230,12 @@ export default function ProductCard({ product, compact = false }) {
                   fontWeight: 'bold',
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 16, fontWeight: 'bold' }}>remove</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 14, fontWeight: 'bold' }}>remove</span>
               </button>
               <span style={{
                 fontWeight: 800,
-                fontSize: 14,
-                minWidth: 24,
+                fontSize: compact ? 12 : 14,
+                minWidth: 20,
                 textAlign: 'center',
                 color: 'var(--primary)',
               }}>
@@ -243,8 +244,8 @@ export default function ProductCard({ product, compact = false }) {
               <button
                 onClick={handleIncrement}
                 style={{
-                  width: compact ? 24 : 30,
-                  height: compact ? 24 : 30,
+                  width: compact ? 22 : 30,
+                  height: compact ? 22 : 30,
                   borderRadius: 'var(--radius-sm)',
                   background: 'var(--primary)',
                   display: 'flex',
@@ -254,7 +255,7 @@ export default function ProductCard({ product, compact = false }) {
                   fontWeight: 'bold',
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 16, fontWeight: 'bold' }}>add</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 14, fontWeight: 'bold' }}>add</span>
               </button>
             </div>
           )}
