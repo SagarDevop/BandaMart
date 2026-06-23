@@ -18,7 +18,10 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.SMTP_USER || process.env.EMAIL_USER,
     pass: process.env.SMTP_PASS || process.env.EMAIL_PASS
-  }
+  },
+  connectionTimeout: 8000, // 8 seconds
+  greetingTimeout: 8000,   // 8 seconds
+  socketTimeout: 8000      // 8 seconds
 });
 
 
@@ -247,7 +250,10 @@ app.post('/api/admin/forgot-password', async (req, res) => {
         return res.json({ success: true, message: 'Reset code sent to your email.' });
       } catch (mailErr) {
         console.error('[SMTP Error] Failed to send email via SMTP:', mailErr.message);
-        return res.status(500).json({ error: 'Failed to send OTP email: ' + mailErr.message });
+        return res.json({
+          success: true,
+          message: 'Reset code generated. (SMTP connection timed out/failed. If hosted on Render Free Tier, outbound SMTP is blocked; please view your Render Dashboard logs to retrieve the OTP code).'
+        });
       }
     } else {
       console.log('[SMTP Warning] SMTP credentials are not configured. Using console log fallback.');
