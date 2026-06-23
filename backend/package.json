@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "seed:categories": "node seedCategories.js"
   },
   "dependencies": {
     "cloudinary": "^2.10.0",

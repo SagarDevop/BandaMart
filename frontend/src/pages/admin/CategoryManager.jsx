@@ -2,7 +2,36 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts, API_BASE } from '../../context/ProductContext';
 
-const ICONS = ['eco', 'nutrition', 'spa', 'filter_vintage', 'grass', 'local_florist', 'yard', 'park', 'forest', 'compost'];
+const ICONS = [
+  // Grocery & Kirana
+  'storefront', 'shopping_basket', 'shopping_cart', 'store',
+  // Fruits & Vegetables
+  'eco', 'nutrition', 'nature',
+  // Dairy & Bakery
+  'bakery_dining', 'water_drop', 'egg', 'icecream',
+  // Beverages
+  'local_cafe', 'local_bar', 'coffee',
+  // Snacks & Namkeen
+  'cookie', 'fastfood',
+  // Home & Kitchen
+  'home', 'kitchen', 'soup_kitchen',
+  // Cleaning & Household
+  'cleaning_services', 'soap', 'mop',
+  // Baby Care
+  'child_care', 'baby_changing_station', 'crib',
+  // Stationery
+  'edit', 'menu_book', 'history_edu',
+  // Electronics & Accessories
+  'devices', 'smartphone', 'headphones',
+  // Fashion & Clothing
+  'checkroom', 'shopping_bag',
+  // Footwear
+  'steps', 'directions_walk',
+  // Flowers & Garlands
+  'local_florist', 'filter_vintage', 'spa',
+  // Others
+  'category', 'more_horiz'
+];
 
 const PALETTES = [
   { name: 'Green', color: 'var(--primary-fixed)', bgColor: 'rgba(188, 240, 174, 0.2)' },
@@ -19,11 +48,11 @@ export default function CategoryManager() {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [form, setForm] = useState({ name: '', icon: 'eco', color: PALETTES[0].color, bgColor: PALETTES[0].bgColor, image: '' });
+  const [form, setForm] = useState({ name: '', icon: 'storefront', color: PALETTES[0].color, bgColor: PALETTES[0].bgColor, image: '' });
 
   const openAdd = () => {
     setEditing(null);
-    setForm({ name: '', icon: 'eco', color: PALETTES[0].color, bgColor: PALETTES[0].bgColor, image: '' });
+    setForm({ name: '', icon: 'storefront', color: PALETTES[0].color, bgColor: PALETTES[0].bgColor, image: '' });
     setShowModal(true);
   };
 
