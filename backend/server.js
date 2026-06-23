@@ -7,10 +7,14 @@ import mongoose from 'mongoose';
 import dns from 'dns';
 import compression from 'compression';
 import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 dotenv.config();
 
-// Configure Nodemailer Transporter
+// Initialize Resend
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+// Configure Nodemailer Transporter (Backup)
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || process.env.EMAIL_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || process.env.EMAIL_PORT || '587', 10),
@@ -217,10 +221,50 @@ app.post('/api/admin/forgot-password', async (req, res) => {
     console.log(`Email recipient: ${email}`);
     console.log('==========================================\n');
 
-    // Check if SMTP is configured
+    // Check if Resend or SMTP is configured
+    const isResendConfigured = !!resend && process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your_resend_api_key';
     const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
     const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
     const isSmtpConfigured = smtpUser && smtpUser !== 'your_email@gmail.com' && smtpPass && smtpPass !== 'your_gmail_app_password';
+
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <h2 style="color: #10b981; text-align: center;">BandaMart Admin</h2>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0;" />
+        <p>Hello Admin,</p>
+        <p>You requested to reset your password. Please use the following 6-digit verification code (OTP) to complete the process:</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1e293b; background-color: #f1f5f9; padding: 10px 20px; border-radius: 6px; border: 1px solid #cbd5e1;">${otpCode}</span>
+        </div>
+        <p>This verification code is valid for <strong>15 minutes</strong>. If you did not initiate this request, you can safely ignore this email.</p>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-top: 30px;" />
+        <p style="font-size: 12px; color: #64748b; text-align: center;">This is an automated email from BandaMart. Please do not reply.</p>
+      </div>
+    `;
+
+    const emailText = `Hello,\n\nYou requested to reset your BandaMart Admin password. Your 6-digit OTP verification code is: ${otpCode}\n\nThis code will expire in 15 minutes.\n\nIf you did not request this, please ignore this email.`;
+
+    if (isResendConfigured) {
+      try {
+        await resend.emails.send({
+          from: 'BandaMart Admin <onboarding@resend.dev>',
+          to: email.trim().toLowerCase(),
+          subject: 'BandaMart Admin Password Reset OTP',
+          text: emailText,
+          html: emailHtml
+        });
+        console.log(`[Resend Email Sent] Reset code sent to ${email}`);
+        return res.json({ success: true, message: 'Reset code sent to your email.' });
+      } catch (resendErr) {
+        console.error('[Resend Error] Failed to send email via Resend:', resendErr.message);
+        if (!isSmtpConfigured) {
+          return res.json({
+            success: true,
+            message: 'Reset code generated. (Resend failed, please view your backend console logs to retrieve the OTP).'
+          });
+        }
+      }
+    }
 
     if (isSmtpConfigured) {
       try {
@@ -228,21 +272,8 @@ app.post('/api/admin/forgot-password', async (req, res) => {
           from: `"BandaMart Admin" <${smtpUser}>`,
           to: email.trim().toLowerCase(),
           subject: 'BandaMart Admin Password Reset OTP',
-          text: `Hello,\n\nYou requested to reset your BandaMart Admin password. Your 6-digit OTP verification code is: ${otpCode}\n\nThis code will expire in 15 minutes.\n\nIf you did not request this, please ignore this email.`,
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <h2 style="color: #10b981; text-align: center;">BandaMart Admin</h2>
-              <hr style="border: 0; border-top: 1px solid #e2e8f0;" />
-              <p>Hello Admin,</p>
-              <p>You requested to reset your password. Please use the following 6-digit verification code (OTP) to complete the process:</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1e293b; background-color: #f1f5f9; padding: 10px 20px; border-radius: 6px; border: 1px solid #cbd5e1;">${otpCode}</span>
-              </div>
-              <p>This verification code is valid for <strong>15 minutes</strong>. If you did not initiate this request, you can safely ignore this email.</p>
-              <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-top: 30px;" />
-              <p style="font-size: 12px; color: #64748b; text-align: center;">This is an automated email from BandaMart. Please do not reply.</p>
-            </div>
-          `
+          text: emailText,
+          html: emailHtml
         };
 
         await transporter.sendMail(mailOptions);
@@ -255,11 +286,11 @@ app.post('/api/admin/forgot-password', async (req, res) => {
           message: 'Reset code generated. (SMTP connection timed out/failed. If hosted on Render Free Tier, outbound SMTP is blocked; please view your Render Dashboard logs to retrieve the OTP code).'
         });
       }
-    } else {
-      console.log('[SMTP Warning] SMTP credentials are not configured. Using console log fallback.');
+    } else if (!isResendConfigured) {
+      console.log('[Email Warning] Neither Resend nor SMTP is configured. Using console log fallback.');
       return res.json({
         success: true,
-        message: 'Reset code generated. (SMTP is not configured on the server, please view the terminal console to get the code).'
+        message: 'Reset code generated. (Email service is not configured on the server, please view the terminal console to get the code).'
       });
     }
   } catch (err) {
