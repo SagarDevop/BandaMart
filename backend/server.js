@@ -72,14 +72,21 @@ const Admin = mongoose.model('Admin', adminSchema);
 
 async function seedDefaultAdmin() {
   try {
-    const adminExists = await Admin.findOne({ username: 'AdminBmji' });
-    if (!adminExists) {
-      await Admin.create({
-        username: 'AdminBmji',
-        email: 'aman1833777@gmail.com',
+    const adminEmail = process.env.ADMIN_EMAIL || 'sagar.singh44818@gmail.com';
+    const adminUsername = process.env.ADMIN_USERNAME || 'AdminBmji';
+
+    let admin = await Admin.findOne({ username: adminUsername });
+    if (!admin) {
+      admin = await Admin.create({
+        username: adminUsername,
+        email: adminEmail,
         password: process.env.ADMIN_PASSWORD || 'fy7de1Jq0PnvIwoB8CTI85GA',
       });
-      console.log('Default Admin seeded successfully: username=AdminBmji, email=aman1833777@gmail.com');
+      console.log(`Default Admin seeded successfully: username=${adminUsername}, email=${adminEmail}`);
+    } else if (admin.email !== adminEmail) {
+      admin.email = adminEmail;
+      await admin.save();
+      console.log(`Admin email updated to: ${adminEmail}`);
     }
   } catch (err) {
     console.error('Error seeding default admin:', err);
