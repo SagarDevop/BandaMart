@@ -9,6 +9,7 @@ import { ProductGridSkeleton, SkeletonCategory, SkeletonBanner } from '../compon
 import { APP_CONFIG } from '../data/sampleData';
 import Logo from '../components/Logo';
 import { optimizeImageUrl } from '../utils/image';
+import Footer from '../components/Footer';
 
 const welcomeSlides = [
   {
@@ -187,7 +188,7 @@ export default function Home() {
   }
 
   return (
-    <div className="app-container" style={{ paddingBottom: 140 }}>
+    <div className="app-container" style={{ paddingBottom: 0 }}>
       {/* Header */}
       <header style={{
         position: 'sticky',
@@ -768,90 +769,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer style={{
-          textAlign: 'center',
-          padding: 'var(--space-xl) var(--container-padding)',
-          marginTop: 'var(--space-xl)',
-          borderTop: '1px solid var(--outline-variant)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 'var(--space-xs)',
-          opacity: 0.7,
-        }}>
-          <p className="text-label-sm" style={{ margin: 0, color: 'var(--on-surface-variant)', fontSize: 11 }}>
-            © 2026 BandaMart — Sab kuch, sabke paas
-          </p>
-          <button 
-            onClick={() => navigate('/admin')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--primary)',
-              fontSize: '11px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              opacity: 0.5,
-              textDecoration: 'underline',
-              padding: '4px 8px',
-            }}
-          >
-            Staff Portal
-          </button>
-        </footer>
-
       </main>
 
-      {/* Floating WhatsApp Button */}
-      <div style={{
-        position: 'absolute',
-        bottom: totalItems > 0 ? 140 : 80,
-        right: 20,
-        zIndex: 99,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        gap: '6px',
-      }}>
-        <div style={{
-          background: '#ffffff',
-          borderRadius: 'var(--radius-full)',
-          padding: '4px 10px',
-          boxShadow: 'var(--shadow-md)',
-          border: '1px solid rgba(37,211,102,0.3)',
-          fontSize: '9px',
-          fontWeight: 800,
-          color: '#164b2b',
-          whiteSpace: 'nowrap',
-        }}>
-          Order on WhatsApp
-        </div>
-        <a
-          href={`https://wa.me/${whatsappNumber}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            background: '#25D366',
-            color: '#ffffff',
-            width: 48,
-            height: 48,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 16px rgba(37,211,102,0.4)',
-            cursor: 'pointer',
-            transition: 'transform 0.2s',
-          }}
-          onPointerDown={e => e.currentTarget.style.transform = 'scale(0.9)'}
-          onPointerUp={e => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12.031 2c-5.524 0-10 4.48-10 10 0 1.76.46 3.42 1.34 4.89l-1.42 5.17 5.3-1.39c1.42.77 3.03 1.18 4.78 1.18 5.52 0 10-4.48 10-10s-4.48-10-10-10zm6.95 14.5c-.27.76-1.36 1.4-1.87 1.5-.47.1-1.07.16-3.15-.7-2.67-1.1-4.38-3.8-4.52-3.98-.13-.18-1.09-1.45-1.09-2.77 0-1.32.69-1.97.94-2.23.25-.26.54-.32.72-.32.18 0 .36.01.52.02.17.01.39-.06.61.47.23.56.78 1.9.85 2.04.07.14.07.31-.02.48-.09.18-.14.28-.27.44-.13.16-.28.36-.39.48-.12.13-.25.27-.1.52.15.25.66 1.09 1.42 1.76.98.86 1.8 1.13 2.06 1.25.26.13.41.1.56-.07.15-.17.65-.76.82-1.02.17-.26.34-.22.58-.13.23.09 1.5.71 1.76.84.26.13.43.2.49.3.07.1.07.6-.2 1.36z"/>
-          </svg>
-        </a>
-      </div>
+      <Footer />
+
+
+
 
       <CartBar />
       <BottomNav />

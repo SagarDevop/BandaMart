@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import TopAppBar from '../components/TopAppBar';
 import BottomNav from '../components/BottomNav';
 import CartBar from '../components/CartBar';
+import Footer from '../components/Footer';
+
 
 export default function About() {
   const navigate = useNavigate();
 
   return (
-    <div className="app-container" style={{ paddingBottom: 140 }}>
+    <div className="app-container" style={{ paddingBottom: 0 }}>
       <TopAppBar title="Our Story" showSearch />
 
       <main style={{ padding: '0 var(--container-padding) var(--space-xl)' }}>
@@ -194,40 +196,10 @@ export default function About() {
           </button>
         </section>
 
-        {/* Footer */}
-        <footer style={{
-          textAlign: 'center',
-          padding: 'var(--space-xl) var(--container-padding)',
-          marginTop: 'var(--space-xl)',
-          borderTop: '1px solid var(--outline-variant)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 'var(--space-xs)',
-          opacity: 0.7,
-        }}>
-          <p className="text-label-sm" style={{ margin: 0, color: 'var(--on-surface-variant)', fontSize: 11 }}>
-            © 2026 BandaMart — Sab kuch, sabke paas
-          </p>
-          <button 
-            onClick={() => navigate('/admin')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--primary)',
-              fontSize: '11px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              opacity: 0.5,
-              textDecoration: 'underline',
-              padding: '4px 8px',
-            }}
-          >
-            Staff Portal
-          </button>
-        </footer>
-
       </main>
+
+      <Footer />
+
 
       <CartBar />
       <BottomNav />
