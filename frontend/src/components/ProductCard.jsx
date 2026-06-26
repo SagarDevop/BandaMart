@@ -56,12 +56,31 @@ export default function ProductCard({ product, compact = false }) {
         e.currentTarget.style.borderColor = 'var(--outline-variant)';
       }}
     >
+      {/* Discount Badge */}
+      {discountPercent > 0 && (
+        <div style={{
+          position: 'absolute',
+          top: 8,
+          left: 8,
+          background: '#ff3f6c',
+          color: '#ffffff',
+          fontSize: '10px',
+          fontWeight: 800,
+          padding: '3px 8px',
+          borderRadius: '4px',
+          zIndex: 2,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        }}>
+          {discountPercent}% OFF
+        </div>
+      )}
+
       {/* Express Delivery Badge */}
       {product.featured && !compact && (
         <div style={{
           position: 'absolute',
           top: 8,
-          left: 8,
+          right: 8,
           background: '#ffc107',
           color: '#000000',
           fontSize: '9px',
@@ -159,28 +178,14 @@ export default function ProductCard({ product, compact = false }) {
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
-          flexWrap: 'wrap',
         }}>
-          <span style={{ fontWeight: 800, color: 'var(--on-surface)', fontSize: compact ? 13.5 : 16 }}>
+          <span style={{ fontWeight: 800, color: '#2d8a4e', fontSize: compact ? 13.5 : 16 }}>
             ₹{product.price}
           </span>
-          {!compact && (
-            <>
-              <span style={{ textDecoration: 'line-through', fontSize: 12, color: 'var(--outline)', opacity: 0.8 }}>
-                ₹{originalPrice}
-              </span>
-              <span style={{
-                fontSize: '9px',
-                background: 'var(--primary-container)',
-                color: 'var(--on-primary-container)',
-                padding: '2px 5px',
-                borderRadius: '3px',
-                fontWeight: 800,
-                marginLeft: 'auto',
-              }}>
-                {discountPercent}% OFF
-              </span>
-            </>
+          {originalPrice > product.price && (
+            <span style={{ textDecoration: 'line-through', fontSize: compact ? 11 : 12, color: 'var(--outline)', opacity: 0.8 }}>
+              ₹{originalPrice}
+            </span>
           )}
         </div>
 

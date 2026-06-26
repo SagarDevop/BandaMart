@@ -177,7 +177,7 @@ export default function ProductDetail() {
                     ₹{originalPrice}
                   </span>
                 )}
-                <span className="text-headline-lg" style={{ color: 'var(--secondary)', margin: 0 }}>
+                <span className="text-headline-lg" style={{ color: '#2d8a4e', margin: 0, fontWeight: 800 }}>
                   ₹{product.price}
                 </span>
               </div>
@@ -186,10 +186,10 @@ export default function ProductDetail() {
               </span>
               {originalPrice > product.price && (
                 <span style={{
-                  fontSize: '9px',
-                  background: 'var(--primary-container)',
-                  color: 'var(--on-primary-container)',
-                  padding: '2px 6px',
+                  fontSize: '10px',
+                  background: '#ff3f6c',
+                  color: '#ffffff',
+                  padding: '3px 8px',
                   borderRadius: '4px',
                   fontWeight: 800,
                   marginTop: 4,
