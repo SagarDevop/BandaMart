@@ -10,7 +10,7 @@ export default function ProductManager() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [form, setForm] = useState({
-    name: '', category: '', price: '', originalPrice: '', costPrice: '', unit: 'kg',
+    name: '', category: '', price: '', originalPrice: '', unit: 'kg',
     description: '', available: true, featured: false, image: '',
   });
 
@@ -21,7 +21,7 @@ export default function ProductManager() {
   const openAdd = () => {
     setEditingProduct(null);
     setForm({
-      name: '', category: categories[0]?.id || '', price: '', originalPrice: '', costPrice: '',
+      name: '', category: categories[0]?.id || '', price: '', originalPrice: '',
       unit: 'kg', description: '', available: true, featured: false, image: ''
     });
     setShowModal(true);
@@ -33,7 +33,6 @@ export default function ProductManager() {
       ...product,
       price: String(product.price || ''),
       originalPrice: product.originalPrice !== undefined && product.originalPrice !== null ? String(product.originalPrice) : '',
-      costPrice: product.costPrice !== undefined && product.costPrice !== null ? String(product.costPrice) : '',
     });
     setShowModal(true);
   };
@@ -72,7 +71,6 @@ export default function ProductManager() {
       ...form,
       price: Number(form.price),
       originalPrice: form.originalPrice ? Number(form.originalPrice) : undefined,
-      costPrice: form.costPrice ? Number(form.costPrice) : undefined,
     };
     if (editingProduct) {
       updateProduct(editingProduct.id, data);
@@ -191,9 +189,8 @@ export default function ProductManager() {
               <div style={{ flexGrow: 1, minWidth: 0 }}>
                 <p className="truncate" style={{ fontWeight: 600, fontSize: 15, margin: 0 }}>{product.name}</p>
                 <p className="text-label-sm" style={{ color: 'var(--outline)', margin: '2px 0 0', lineHeight: 1.4 }}>
-                  SP: <strong>₹{product.price}</strong>/{product.unit}
+                  Price: <strong>₹{product.price}</strong>/{product.unit}
                   {product.originalPrice ? ` · MRP: ₹${product.originalPrice}` : ''}
-                  {product.costPrice ? ` · CP: ₹${product.costPrice}` : ''}
                   <br />
                   Category: {categories.find(c => c.id === product.category)?.name || 'None'}
                 </p>
@@ -258,22 +255,15 @@ export default function ProductManager() {
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-md)' }}>
                 <div>
-                  <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Original Price (MRP) (₹)</label>
+                  <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Original Price (MRP)</label>
                   <input type="number" placeholder="e.g. 1299" value={form.originalPrice} onChange={e => setForm(f => ({...f, originalPrice: e.target.value}))}
                     style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }} />
                 </div>
                 <div>
-                  <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Selling Price (₹) *</label>
+                  <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Selling Price *</label>
                   <input type="number" placeholder="e.g. 999" value={form.price} onChange={e => setForm(f => ({...f, price: e.target.value}))}
-                    style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }} />
-                </div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
-                <div>
-                  <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Cost Price (CP) (₹)</label>
-                  <input type="number" placeholder="e.g. 400" value={form.costPrice} onChange={e => setForm(f => ({...f, costPrice: e.target.value}))}
                     style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }} />
                 </div>
                 <div>
