@@ -16,6 +16,15 @@ export default function ProductDetail() {
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
 
+  // Price calculations
+  const hasOriginal = product ? (product.originalPrice && product.originalPrice > product.price) : false;
+  const discountPercent = product ? (hasOriginal
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : ((product.price % 3 === 0) ? 15 : (product.price % 2 === 0) ? 10 : 20)) : 0;
+  const originalPrice = product ? (hasOriginal
+    ? product.originalPrice
+    : Math.round(product.price / (1 - (discountPercent / 100)))) : 0;
+
   if (!product) {
     return (
       <div className="app-container" style={{
@@ -161,10 +170,33 @@ export default function ProductDetail() {
                 {product.available ? 'In Stock' : 'Out of Stock'}
               </span>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <p className="text-headline-lg" style={{ color: 'var(--secondary)', margin: 0 }}>
-                ₹{product.price}/{product.unit}
-              </p>
+            <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                {originalPrice > product.price && (
+                  <span style={{ textDecoration: 'line-through', fontSize: 13, color: 'var(--outline)', opacity: 0.8 }}>
+                    ₹{originalPrice}
+                  </span>
+                )}
+                <span className="text-headline-lg" style={{ color: 'var(--secondary)', margin: 0 }}>
+                  ₹{product.price}
+                </span>
+              </div>
+              <span style={{ fontSize: 12, color: 'var(--outline)' }}>
+                per {product.unit}
+              </span>
+              {originalPrice > product.price && (
+                <span style={{
+                  fontSize: '9px',
+                  background: 'var(--primary-container)',
+                  color: 'var(--on-primary-container)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  fontWeight: 800,
+                  marginTop: 4,
+                }}>
+                  {discountPercent}% OFF
+                </span>
+              )}
             </div>
           </div>
 

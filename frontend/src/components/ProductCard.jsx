@@ -26,8 +26,13 @@ export default function ProductCard({ product, compact = false }) {
     decrement(product.id);
   };
 
-  const discountPercent = (product.price % 3 === 0) ? 15 : (product.price % 2 === 0) ? 10 : 20;
-  const originalPrice = Math.round(product.price / (1 - (discountPercent / 100)));
+  const hasOriginal = product.originalPrice && product.originalPrice > product.price;
+  const discountPercent = hasOriginal
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : ((product.price % 3 === 0) ? 15 : (product.price % 2 === 0) ? 10 : 20);
+  const originalPrice = hasOriginal
+    ? product.originalPrice
+    : Math.round(product.price / (1 - (discountPercent / 100)));
 
   return (
     <div
