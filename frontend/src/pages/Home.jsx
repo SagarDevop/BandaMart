@@ -30,73 +30,14 @@ export default function Home() {
     triggerToast(`Coupon "${code}" copied to clipboard! 📋`);
   };
 
-  // Mock top selling products to exactly match the screenshot
-  const topSellingProducts = [
-    {
-      id: 'top_tomato',
-      name: 'Tomato',
-      price: 25,
-      unit: '1 kg',
-      originalPrice: 30,
-      discountPercent: 15,
-      rating: 4.4,
-      available: true,
-      image: 'https://images.unsplash.com/photo-1595855759920-86582396756a?w=400'
-    },
-    {
-      id: 'top_milk',
-      name: 'Amul Taaza Milk',
-      price: 56,
-      unit: '1 L',
-      originalPrice: 60,
-      discountPercent: 7,
-      rating: 4.6,
-      available: true,
-      image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400'
-    },
-    {
-      id: 'top_lays',
-      name: 'Lay\'s Classic',
-      price: 20,
-      unit: '52g',
-      originalPrice: 25,
-      discountPercent: 20,
-      rating: 4.3,
-      available: true,
-      image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400'
-    },
-    {
-      id: 'top_atta',
-      name: 'Aashirvaad Atta',
-      price: 249,
-      unit: '5 kg',
-      originalPrice: 280,
-      discountPercent: 11,
-      rating: 4.5,
-      available: true,
-      image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400'
-    }
-  ];
+  // Retrieve products dynamically from backend context
+  const featuredProds = products.filter(p => p.featured && p.available);
+  const topSellingProducts = featuredProds.length > 0 
+    ? featuredProds.slice(0, 4) 
+    : products.filter(p => p.available).slice(0, 4);
 
-  // Specific categories to match the improved design's circular categories
-  const categoriesToShow = [
-    { id: 'fruits_veg', name: 'Fruits & Vegetables', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=150' },
-    { id: 'dairy_bakery', name: 'Dairy & Eggs', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=150' },
-    { id: 'snacks_namkeen', name: 'Snacks & Munchies', image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=150' },
-    { id: 'grocery_kirana', name: 'Grocery & Staples', image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=150' },
-    { id: 'cleaning_household', name: 'Personal Care', image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=150' },
-  ];
-
-  // Offers to match the Best Offers for You section
-  const offersList = [
-    { code: 'FREEDEL', title: 'FREE DELIVERY', subtitle: 'Above ₹299', desc: 'Auto-applied', bgColor: '#fce4ec', textColor: '#c2185b', icon: 'local_shipping' },
-    { code: 'WELCOME50', title: 'FIRST ORDER', subtitle: '₹50 OFF', desc: 'Use code: WELCOME50', bgColor: '#e8f5e9', textColor: '#2e7d32', icon: 'sell' },
-    { code: 'B2G1', title: 'BUY 2 GET 1', subtitle: 'FREE', desc: 'View All Offers', bgColor: '#fff3e0', textColor: '#e65100', icon: 'celebration' }
-  ];
-
-  // Filter out duplicate mock items by name to display fresh products in normal catalogue
   const normalProducts = products.filter(p => 
-    !['Tomato', 'Amul Taaza Milk', 'Lay\'s Classic', 'Aashirvaad Atta'].includes(p.name)
+    p.available && !topSellingProducts.some(tsp => tsp.id === p.id)
   );
 
   return (
@@ -441,7 +382,7 @@ export default function Home() {
             paddingBottom: '6px',
             paddingTop: '2px',
           }}>
-            {categoriesToShow.map((cat) => (
+            {categories.slice(0, 8).map((cat) => (
               <div
                 key={cat.id}
                 onClick={() => navigate(`/category/${cat.id}`)}
@@ -468,7 +409,7 @@ export default function Home() {
                   marginBottom: '4px',
                 }}>
                   <img
-                    src={cat.image}
+                    src={cat.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=150'}
                     alt={cat.name}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
