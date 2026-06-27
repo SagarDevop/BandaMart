@@ -12,6 +12,7 @@ export default function ProductManager() {
   const [form, setForm] = useState({
     name: '', category: '', price: '', originalPrice: '', unit: 'kg',
     description: '', available: true, featured: false, image: '',
+    image1: '', image2: '', image3: '',
   });
 
   const filtered = products.filter(p =>
@@ -22,7 +23,8 @@ export default function ProductManager() {
     setEditingProduct(null);
     setForm({
       name: '', category: categories[0]?.id || '', price: '', originalPrice: '',
-      unit: 'kg', description: '', available: true, featured: false, image: ''
+      unit: 'kg', description: '', available: true, featured: false, image: '',
+      image1: '', image2: '', image3: ''
     });
     setShowModal(true);
   };
@@ -33,11 +35,14 @@ export default function ProductManager() {
       ...product,
       price: String(product.price || ''),
       originalPrice: product.originalPrice !== undefined && product.originalPrice !== null ? String(product.originalPrice) : '',
+      image1: product.image1 || '',
+      image2: product.image2 || '',
+      image3: product.image3 || '',
     });
     setShowModal(true);
   };
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e, fieldName = 'image') => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -57,7 +62,7 @@ export default function ProductManager() {
       }
 
       const data = await res.json();
-      setForm(f => ({ ...f, image: data.secure_url }));
+      setForm(f => ({ ...f, [fieldName]: data.secure_url }));
     } catch (err) {
       alert(err.message || 'Image upload failed. Please verify your backend server configuration.');
     } finally {
@@ -282,13 +287,13 @@ export default function ProductManager() {
                   style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', resize: 'none', fontFamily: 'inherit', border: '1px solid var(--outline-variant)' }} />
               </div>
               <div>
-                <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Product Image</label>
+                <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4, fontWeight: 700 }}>Product Cover Image (Main) *</label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <input
                     type="text"
                     value={form.image}
                     onChange={e => setForm(f => ({ ...f, image: e.target.value }))}
-                    placeholder="Paste image URL..."
+                    placeholder="Paste main cover image URL..."
                     style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 14, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }}
                   />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -296,7 +301,7 @@ export default function ProductManager() {
                     {uploadingImage ? (
                       <span style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
                         <span className="material-symbols-outlined animate-spin" style={{ fontSize: 16 }}>sync</span>
-                        Uploading to Cloudinary...
+                        Uploading...
                       </span>
                     ) : (
                       <input
@@ -309,10 +314,45 @@ export default function ProductManager() {
                   </div>
                 </div>
                 {form.image && (
-                  <div style={{ marginTop: 8, width: 80, height: 80, borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+                  <div style={{ marginTop: 8, width: 70, height: 70, borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--outline-variant)' }}>
                     <img src={form.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 )}
+              </div>
+
+              {/* Flipkart style additional 3 images */}
+              <div style={{ borderTop: '1px solid var(--outline-variant)', paddingTop: 'var(--space-md)', marginTop: 'var(--space-sm)' }}>
+                <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 8, fontWeight: 700 }}>
+                  Additional Images (Flipkart Style - Up to 3)
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {['image1', 'image2', 'image3'].map((imgKey, idx) => (
+                    <div key={imgKey} style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '10px', background: '#f8fafc', borderRadius: 'var(--radius-lg)', border: '1px solid var(--outline-variant)' }}>
+                      <span style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 700 }}>Additional Image {idx + 1}</span>
+                      <input
+                        type="text"
+                        value={form[imgKey] || ''}
+                        onChange={e => setForm(f => ({ ...f, [imgKey]: e.target.value }))}
+                        placeholder={`Paste image ${idx + 1} URL...`}
+                        style={{ width: '100%', padding: '8px 12px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-md)', fontSize: 13, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }}
+                      />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 11, color: 'var(--outline)' }}>OR</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handleImageUpload(e, imgKey)}
+                          style={{ fontSize: 11 }}
+                        />
+                      </div>
+                      {form[imgKey] && (
+                        <div style={{ marginTop: 4, width: 54, height: 54, borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--outline-variant)', background: '#ffffff' }}>
+                          <img src={form[imgKey]} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
               <div style={{ display: 'flex', gap: 'var(--space-lg)' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer' }}>

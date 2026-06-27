@@ -6,6 +6,7 @@ import { useProducts } from '../context/ProductContext';
 const tabs = [
   { id: 'home', label: 'Home', icon: 'home', path: '/' },
   { id: 'categories', label: 'Categories', icon: 'grid_view', path: '/categories' },
+  { id: 'offers', label: 'Offers', icon: 'local_offer', path: '/offers' },
   { id: 'about', label: 'About Us', icon: 'info', path: '/about' },
   { id: 'contact', label: 'Contact', icon: 'chat_bubble', path: '/contact' },
 ];
@@ -68,10 +69,13 @@ export default function BottomNav() {
       display: 'flex',
       justifyContent: 'space-around',
       alignItems: 'center',
-      padding: '8px 16px 12px',
-      background: 'var(--surface-container-lowest)',
-      boxShadow: 'var(--shadow-top)',
-      borderRadius: '16px 16px 0 0',
+      padding: '6px 6px 10px',
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+      boxShadow: '0 -4px 16px rgba(0,0,0,0.06)',
+      borderRadius: '20px 20px 0 0',
+      borderTop: '1px solid rgba(0,0,0,0.04)',
       transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
     }}>
       {tabs.map(tab => {
@@ -91,46 +95,33 @@ export default function BottomNav() {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '4px 16px',
-              borderRadius: 'var(--radius-sm)',
+              padding: '6px 2px',
+              borderRadius: 'var(--radius-md)',
               background: 'transparent',
-              color: active ? 'var(--primary)' : 'var(--on-surface-variant)',
+              color: active ? 'var(--primary)' : '#6b7280',
               position: 'relative',
-              minWidth: 56,
+              flex: 1,
+              minWidth: 0,
+              cursor: 'pointer',
             }}
           >
             <div style={{ position: 'relative', display: 'inline-flex' }}>
               <span
                 className="material-symbols-outlined"
                 style={{
-                  fontSize: 24,
+                  fontSize: 22,
                   fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0",
                 }}
               >
                 {tab.icon}
               </span>
-              {tab.id === 'cart' && totalItems > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: -4,
-                  right: -6,
-                  width: 16,
-                  height: 16,
-                  borderRadius: '50%',
-                  background: 'var(--error)',
-                  color: 'var(--on-error)',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  lineHeight: 1,
-                }}>
-                  {totalItems > 9 ? '9+' : totalItems}
-                </span>
-              )}
             </div>
-            <span className="text-label-sm" style={{ fontSize: 11, marginTop: 2 }}>
+            <span style={{ 
+              fontSize: 10, 
+              marginTop: 3,
+              fontWeight: active ? 700 : 500,
+              letterSpacing: '-0.01em'
+            }}>
               {tab.label}
             </span>
           </button>

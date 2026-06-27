@@ -113,6 +113,9 @@ const productSchema = new mongoose.Schema({
   costPrice: { type: Number },
   unit: { type: String, required: true },
   image: { type: String, default: '' },
+  image1: { type: String, default: '' },
+  image2: { type: String, default: '' },
+  image3: { type: String, default: '' },
   description: { type: String, default: '' },
   available: { type: Boolean, default: true },
   featured: { type: Boolean, default: false }

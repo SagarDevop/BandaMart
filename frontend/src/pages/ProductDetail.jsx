@@ -16,6 +16,22 @@ export default function ProductDetail() {
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
 
+  // Flipkart style active image state
+  const [activeImage, setActiveImage] = useState(product ? product.image : '');
+
+  React.useEffect(() => {
+    if (product) {
+      setActiveImage(product.image);
+    }
+  }, [product, productId]);
+
+  const allImages = product ? [
+    product.image,
+    product.image1,
+    product.image2,
+    product.image3
+  ].filter(Boolean) : [];
+
   // Price calculations
   const hasOriginal = product ? (product.originalPrice && product.originalPrice > product.price) : false;
   const discountPercent = product ? (hasOriginal
@@ -114,29 +130,82 @@ export default function ProductDetail() {
         </div>
       </header>
 
-      {/* Hero Image */}
+      {/* Hero Image / Flipkart-style Gallery */}
       <section style={{
-        position: 'relative',
-        width: '100%',
-        aspectRatio: '4/5',
-        overflow: 'hidden',
-        maxHeight: 420,
+        background: '#ffffff',
+        paddingTop: 80, // spacing for fixed header
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        borderBottom: '1px solid var(--outline-variant)'
       }}>
-        <img
-          src={optimizeImageUrl(product.image, 600) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500'}
-          alt={product.name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
+        {/* Main cover image container */}
         <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, transparent 60%, var(--background) 100%)',
-        }} />
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '1.2',
+          maxHeight: 340,
+          background: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '12px'
+        }}>
+          <img
+            src={optimizeImageUrl(activeImage, 600) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500'}
+            alt={product.name}
+            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+          />
+        </div>
+
+        {/* Horizontal Thumbnails (Flipkart style) */}
+        {allImages.length > 1 && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '10px',
+            padding: '12px 16px',
+            width: '100%',
+            background: '#ffffff'
+          }}>
+            {allImages.map((imgUrl, index) => {
+              const isSelected = activeImage === imgUrl;
+              return (
+                <div
+                  key={index}
+                  onClick={() => setActiveImage(imgUrl)}
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: 'var(--radius-md)',
+                    border: isSelected ? '2px solid var(--primary)' : '1.5px solid var(--outline-variant)',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: '#ffffff',
+                    padding: '3px',
+                    boxShadow: isSelected ? '0 2px 8px rgba(132, 194, 37, 0.25)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <img
+                    src={optimizeImageUrl(imgUrl, 150)}
+                    alt={`${product.name} view ${index + 1}`}
+                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Product Details Card */}
       <section style={{
         padding: '0 var(--container-padding)',
-        marginTop: -48,
+        marginTop: 16,
         position: 'relative',
         zIndex: 10,
       }}>
@@ -145,6 +214,7 @@ export default function ProductDetail() {
           borderRadius: 'var(--radius-3xl)',
           padding: 'var(--space-xl)',
           boxShadow: 'var(--shadow-lg)',
+          border: '1px solid var(--outline-variant)',
         }}>
           {/* Title + Price */}
           <div style={{

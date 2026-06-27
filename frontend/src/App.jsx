@@ -11,6 +11,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Search from './pages/Search';
 import About from './pages/About';
+import Offers from './pages/Offers';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/search" element={<Search />} />
             <Route path="/about" element={<About />} />
+            <Route path="/offers" element={<Offers />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLogin />} />
