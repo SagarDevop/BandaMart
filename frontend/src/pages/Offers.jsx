@@ -1,176 +1,107 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopAppBar from '../components/TopAppBar';
 import BottomNav from '../components/BottomNav';
 import Footer from '../components/Footer';
 
-const SAMPLE_COUPONS = [
-  {
-    code: 'WELCOME50',
-    title: 'First Order ₹50 OFF',
-    description: 'Get flat ₹50 off on your first order. Valid on all items.',
-    minOrder: 'No minimum value',
-    color: '#e8f5e9',
-    textColor: '#2e7d32',
-    icon: 'local_offer'
-  },
-  {
-    code: 'FREEDEL',
-    title: 'Free Delivery',
-    description: 'Get free delivery on orders above ₹299. Ordinary delivery fee is ₹20.',
-    minOrder: 'Min order: ₹299',
-    color: '#fce4ec',
-    textColor: '#c2185b',
-    icon: 'local_shipping'
-  },
-  {
-    code: 'B2G1',
-    title: 'Buy 2 Get 1 Free',
-    description: 'Buy 2 get 1 free on selected Snacks & Munchies items. Valid till Sunday.',
-    minOrder: 'Min items: 3 in category',
-    color: '#fff3e0',
-    textColor: '#e65100',
-    icon: 'celebration'
-  },
-  {
-    code: 'KIRANA10',
-    title: '10% OFF on Staples',
-    description: 'Get flat 10% discount on Grocery & Kirana items above ₹999.',
-    minOrder: 'Min order: ₹999',
-    color: '#e3f2fd',
-    textColor: '#0d47a1',
-    icon: 'shopping_basket'
-  }
-];
-
 export default function Offers() {
   const navigate = useNavigate();
-  const [copiedCode, setCopiedCode] = useState('');
-
-  const handleCopy = (code) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(''), 2000);
-  };
 
   return (
     <div className="app-container" style={{ paddingBottom: 100 }}>
+      {/* Dynamic heartbeat animation style injection */}
+      <style>{`
+        @keyframes heartbeat {
+          0% { transform: scale(1); }
+          14% { transform: scale(1.08); }
+          28% { transform: scale(1); }
+          42% { transform: scale(1.12); }
+          70% { transform: scale(1); }
+        }
+      `}</style>
+
       <TopAppBar title="Best Offers" showBack={true} />
 
-      <main style={{ padding: '0 var(--container-padding) var(--space-xl)' }}>
-        {/* Banner */}
+      <main style={{ 
+        padding: '0 var(--container-padding) var(--space-xl)', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        textAlign: 'center',
+        minHeight: '62dvh',
+      }}>
         <div style={{
-          background: 'linear-gradient(135deg, #84c225 0%, #689f38 100%)',
-          color: '#ffffff',
-          borderRadius: 'var(--radius-xl)',
-          padding: 'var(--space-lg) var(--space-md)',
-          textAlign: 'center',
+          background: 'linear-gradient(135deg, #f4faf0 0%, #ffffff 100%)',
+          border: '1.5px dashed var(--primary)',
+          borderRadius: 'var(--radius-2xl)',
+          padding: '40px var(--space-md)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 'var(--space-md)',
+          boxShadow: 'var(--shadow-md)',
+          width: '100%',
+          maxWidth: 400,
           marginTop: 'var(--space-md)',
-          marginBottom: 'var(--space-xl)',
-          boxShadow: 'var(--shadow-md)'
         }}>
-          <h2 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Super Saver Offers! ⚡</h2>
-          <p style={{ fontSize: 13, opacity: 0.9, marginTop: 4, fontWeight: 500 }}>
-            Use these coupon codes on checkout to save big on your groceries.
+          {/* Pulsing Love/Worship Icon */}
+          <div style={{
+            width: 76,
+            height: 76,
+            borderRadius: '50%',
+            background: 'rgba(132, 194, 37, 0.1)',
+            color: 'var(--primary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 'var(--space-xs)',
+            animation: 'heartbeat 1.6s infinite ease-in-out',
+          }}>
+            <span className="material-symbols-outlined filled" style={{ fontSize: 38 }}>
+              volunteer_activism
+            </span>
+          </div>
+
+          <h2 style={{ 
+            fontSize: 22, 
+            fontWeight: 800, 
+            color: 'var(--on-background)', 
+            margin: 0,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.2
+          }}>
+            Offers Coming Soon! ⚡
+          </h2>
+
+          <p style={{ 
+            fontSize: 14, 
+            color: 'var(--outline)', 
+            margin: 0, 
+            lineHeight: 1.5,
+            fontWeight: 650
+          }}>
+            Stay tuned Banda,<br/>show some love! ❤️
           </p>
+
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              marginTop: 'var(--space-xs)',
+              background: 'var(--primary)',
+              color: '#ffffff',
+              padding: '10px 24px',
+              borderRadius: 'var(--radius-full)',
+              fontWeight: 800,
+              fontSize: 12.5,
+              boxShadow: '0 4px 12px rgba(132, 194, 37, 0.2)',
+              transition: 'all 0.2s ease',
+              cursor: 'pointer'
+            }}
+          >
+            Explore Products
+          </button>
         </div>
-
-        {/* Coupons List */}
-        <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-          {SAMPLE_COUPONS.map((coupon) => (
-            <div
-              key={coupon.code}
-              style={{
-                background: '#ffffff',
-                border: '1.5px solid #eef2f6',
-                borderRadius: 'var(--radius-xl)',
-                padding: 'var(--space-md)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                position: 'relative',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              {/* Top row */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 'var(--radius-lg)',
-                  background: coupon.color,
-                  color: coupon.textColor,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-                    {coupon.icon}
-                  </span>
-                </div>
-                <div>
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--on-background)', margin: 0 }}>
-                    {coupon.title}
-                  </h3>
-                  <span style={{ fontSize: 11, color: 'var(--outline)', fontWeight: 600 }}>
-                    {coupon.minOrder}
-                  </span>
-                </div>
-              </div>
-
-              {/* Description */}
-              <p style={{ fontSize: 13, color: 'var(--outline)', margin: 0, lineHeight: 1.4, fontWeight: 500 }}>
-                {coupon.description}
-              </p>
-
-              {/* Coupon Code Actions */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                background: '#f8fafc',
-                border: '1px dashed var(--outline-variant)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '8px 12px',
-                marginTop: '4px'
-              }}>
-                <span style={{
-                  fontFamily: 'monospace',
-                  fontSize: 15,
-                  fontWeight: 800,
-                  color: 'var(--primary)',
-                  letterSpacing: '0.05em'
-                }}>
-                  {coupon.code}
-                </span>
-                
-                <button
-                  onClick={() => handleCopy(coupon.code)}
-                  style={{
-                    background: copiedCode === coupon.code ? 'var(--primary)' : 'rgba(132, 194, 37, 0.1)',
-                    color: copiedCode === coupon.code ? '#ffffff' : 'var(--primary)',
-                    border: 'none',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '6px 14px',
-                    fontSize: 12,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                    {copiedCode === coupon.code ? 'check_circle' : 'content_copy'}
-                  </span>
-                  {copiedCode === coupon.code ? 'Copied!' : 'Copy Code'}
-                </button>
-              </div>
-            </div>
-          ))}
-        </section>
       </main>
 
       <Footer />
