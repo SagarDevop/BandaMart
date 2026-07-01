@@ -154,7 +154,8 @@ export default function ProductCard({ product, compact = false }) {
           margin: '0 0 2px 0',
           fontSize: compact ? 11.5 : 15,
           fontWeight: 700,
-          lineHeight: 1.25,
+          lineHeight: 1.4,
+          paddingBottom: '3px',
           fontFamily: "'Inter', sans-serif",
         }}>
           {product.name}
