@@ -71,16 +71,17 @@ export default function ProductDetail() {
     .slice(0, 5);
 
   const handleAddToCart = () => {
+    if (qty > 0) return;
     setAdding(true);
-    for (let i = 0; i < localQty; i++) {
-      if (i === 0 && qty === 0) addItem(product);
-      else increment(product.id);
+    addItem(product);
+    for (let i = 1; i < localQty; i++) {
+      increment(product.id);
     }
     setTimeout(() => {
       setAdding(false);
       setAdded(true);
-      setTimeout(() => setAdded(false), 2000);
-    }, 500);
+      setTimeout(() => setAdded(false), 1500);
+    }, 400);
   };
 
   const totalPrice = product.price * localQty;
@@ -360,14 +361,20 @@ export default function ProductDetail() {
               boxShadow: 'var(--shadow-lg)',
             }}>
               <button
-                onClick={() => setLocalQty(q => Math.max(1, q - 1))}
+                onClick={() => {
+                  if (qty > 0) {
+                    decrement(product.id);
+                  } else {
+                    setLocalQty(q => Math.max(1, q - 1));
+                  }
+                }}
                 style={{
                   width: 40, height: 40,
                   borderRadius: '50%',
                   background: 'var(--surface-container-lowest)',
                   color: 'var(--primary)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  opacity: localQty <= 1 ? 0.4 : 1,
+                  opacity: (qty > 0 ? qty : localQty) <= 1 ? 0.4 : 1,
                   transition: 'all 0.2s',
                 }}
               >
@@ -379,10 +386,16 @@ export default function ProductDetail() {
                 minWidth: 32,
                 textAlign: 'center',
               }}>
-                {localQty}
+                {qty > 0 ? qty : localQty}
               </span>
               <button
-                onClick={() => setLocalQty(q => q + 1)}
+                onClick={() => {
+                  if (qty > 0) {
+                    increment(product.id);
+                  } else {
+                    setLocalQty(q => q + 1);
+                  }
+                }}
                 style={{
                   width: 40, height: 40,
                   borderRadius: '50%',
@@ -473,52 +486,93 @@ export default function ProductDetail() {
         WebkitBackdropFilter: 'blur(20px)',
         zIndex: 'var(--z-nav)',
       }}>
-        <button
-          onClick={handleAddToCart}
-          disabled={adding || !product.available}
-          style={{
-            width: '100%',
-            background: added ? 'var(--secondary-container)' : 'var(--primary)',
-            color: added ? 'var(--on-secondary-container)' : 'var(--on-primary)',
-            padding: '16px',
-            borderRadius: 'var(--radius-xl)',
+        {qty > 0 ? (
+          <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: 'var(--space-md)',
-            boxShadow: '0 4px 20px rgba(21,66,18,0.2)',
-            transition: 'all 0.3s ease',
-            opacity: product.available ? 1 : 0.5,
-          }}
-        >
-          {adding ? (
-            <>
-              <span className="material-symbols-outlined animate-spin">sync</span>
-              <span className="text-headline-lg-mobile" style={{ fontSize: 18 }}>Adding...</span>
-            </>
-          ) : added ? (
-            <>
-              <span className="material-symbols-outlined">check_circle</span>
-              <span className="text-headline-lg-mobile" style={{ fontSize: 18 }}>Added to Cart</span>
-            </>
-          ) : (
-            <>
-              <span className="material-symbols-outlined filled">shopping_cart</span>
-              <span className="text-headline-lg-mobile" style={{ fontSize: 18 }}>Add to Cart</span>
-              <span style={{
-                marginLeft: 'auto',
-                background: 'var(--primary-container)',
-                color: 'var(--on-primary-container)',
-                padding: '4px 12px',
-                borderRadius: 'var(--radius-lg)',
-                fontSize: 14,
-                fontWeight: 600,
-              }}>
-                ₹{totalPrice}
-              </span>
-            </>
-          )}
-        </button>
+            justifyContent: 'space-between',
+            background: '#ffffff',
+            border: '1.5px solid var(--primary)',
+            borderRadius: 'var(--radius-xl)',
+            padding: '4px',
+            height: 54,
+            boxShadow: '0 4px 20px rgba(132, 194, 37, 0.15)',
+          }}>
+            <button
+              onClick={() => decrement(product.id)}
+              style={{
+                width: 46, height: 46, borderRadius: 'var(--radius-lg)',
+                background: 'var(--primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--primary)', fontWeight: 'bold', fontSize: 18
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontWeight: 'bold' }}>remove</span>
+            </button>
+            <span style={{
+              fontWeight: 800, fontSize: 16, color: 'var(--primary)',
+              minWidth: 40, textAlign: 'center'
+            }}>
+              {qty} in Cart
+            </span>
+            <button
+              onClick={() => increment(product.id)}
+              style={{
+                width: 46, height: 46, borderRadius: 'var(--radius-lg)',
+                background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#ffffff', fontWeight: 'bold', fontSize: 18
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontWeight: 'bold' }}>add</span>
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleAddToCart}
+            disabled={adding || !product.available}
+            style={{
+              width: '100%',
+              background: added ? 'var(--secondary-container)' : 'var(--primary)',
+              color: added ? 'var(--on-secondary-container)' : 'var(--on-primary)',
+              padding: '16px',
+              borderRadius: 'var(--radius-xl)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 'var(--space-md)',
+              boxShadow: '0 4px 20px rgba(21,66,18,0.2)',
+              transition: 'all 0.3s ease',
+              opacity: product.available ? 1 : 0.5,
+            }}
+          >
+            {adding ? (
+              <>
+                <span className="material-symbols-outlined animate-spin">sync</span>
+                <span className="text-headline-lg-mobile" style={{ fontSize: 18 }}>Adding...</span>
+              </>
+            ) : added ? (
+              <>
+                <span className="material-symbols-outlined">check_circle</span>
+                <span className="text-headline-lg-mobile" style={{ fontSize: 18 }}>Added to Cart</span>
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined filled">shopping_cart</span>
+                <span className="text-headline-lg-mobile" style={{ fontSize: 18 }}>Add to Cart</span>
+                <span style={{
+                  marginLeft: 'auto',
+                  background: 'var(--primary-container)',
+                  color: 'var(--on-primary-container)',
+                  padding: '4px 12px',
+                  borderRadius: 'var(--radius-lg)',
+                  fontSize: 14,
+                  fontWeight: 600,
+                }}>
+                  ₹{totalPrice}
+                </span>
+              </>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
