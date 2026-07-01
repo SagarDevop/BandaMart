@@ -33,8 +33,8 @@ export default function Home() {
   // Retrieve products dynamically from backend context
   const featuredProds = products.filter(p => p.featured && p.available);
   const topSellingProducts = featuredProds.length > 0 
-    ? featuredProds.slice(0, 4) 
-    : products.filter(p => p.available).slice(0, 4);
+    ? featuredProds.slice(0, 3) 
+    : products.filter(p => p.available).slice(0, 3);
 
   const normalProducts = products.filter(p => 
     p.available && !topSellingProducts.some(tsp => tsp.id === p.id)
@@ -524,7 +524,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 8. Top Selling Products Section - 4 in a row */}
+        {/* 8. Top Selling Products Section - 3 in a row */}
         <section style={{ marginBottom: 'var(--space-xl)', overflow: 'hidden' }}>
           <div style={{
             display: 'flex',
@@ -553,7 +553,7 @@ export default function Home() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: 'repeat(3, 1fr)',
             gap: '6px',
             paddingTop: '2px',
           }}>
@@ -563,7 +563,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Normal Products Section - 4 in a row */}
+        {/* Normal Products Section - 3 in a row */}
         <section style={{ marginBottom: 'var(--space-xl)', overflow: 'hidden' }}>
           <div style={{
             display: 'flex',
@@ -592,7 +592,7 @@ export default function Home() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: 'repeat(3, 1fr)',
             gap: '6px',
             paddingTop: '2px',
           }}>
