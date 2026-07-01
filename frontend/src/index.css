@@ -518,3 +518,9 @@ html:not(.icons-loaded) .material-symbols-outlined * {
     right: calc(50% - 224px); /* Pinned to the right edge of the 480px centered mobile layout */
   }
 }
+
+@media (max-width: 480px) {
+  :root {
+    --container-padding: 12px;
+  }
+}

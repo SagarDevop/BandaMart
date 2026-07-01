@@ -116,7 +116,7 @@ export default function ProductCard({ product, compact = false }) {
             width: '100%',
             height: '100%',
             objectFit: 'contain',
-            padding: '8px',
+            padding: compact ? '4px' : '8px',
           }}
         />
         {!product.available && (
@@ -139,7 +139,7 @@ export default function ProductCard({ product, compact = false }) {
 
       {/* Info */}
       <div style={{
-        padding: compact ? '8px 8px 10px' : '10px 12px 12px',
+        padding: compact ? '8px 6px 10px' : '10px 12px 12px',
         display: 'flex',
         flexDirection: 'column',
         flexGrow: 1,
@@ -154,7 +154,7 @@ export default function ProductCard({ product, compact = false }) {
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical',
           margin: '0 0 2px 0',
-          fontSize: compact ? 11.5 : 15,
+          fontSize: compact ? 11 : 15,
           fontWeight: 700,
           lineHeight: 1.3,
           height: compact ? '30px' : '40px',
@@ -179,7 +179,7 @@ export default function ProductCard({ product, compact = false }) {
           display: 'flex', 
           alignItems: 'center', 
           gap: '2px', 
-          marginBottom: compact ? '8px' : '10px' 
+          marginBottom: compact ? '6px' : '10px' 
         }}>
           <span style={{ fontSize: '10px', color: '#ffb300' }}>★</span>
           <span style={{ fontSize: '9.5px', fontWeight: 700, color: '#4a5568' }}>
@@ -191,75 +191,81 @@ export default function ProductCard({ product, compact = false }) {
         {compact ? (
           <div style={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            flexDirection: 'column',
+            gap: '6px',
             marginTop: 'auto',
           }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
+            {/* Price Row */}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', flexWrap: 'wrap', lineHeight: 1.1 }}>
               <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--on-background)' }}>
                 ₹{product.price}
               </span>
               {originalPrice > product.price && (
-                <span style={{ fontSize: '9px', color: 'var(--outline)', textDecoration: 'line-through' }}>
+                <span style={{ fontSize: '9.5px', color: 'var(--outline)', textDecoration: 'line-through' }}>
                   ₹{originalPrice}
                 </span>
               )}
             </div>
 
-            {/* Compact Green Stepper/Button */}
-            {qty > 0 ? (
-              <div 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  background: 'var(--primary)', 
-                  borderRadius: 'var(--radius-full)', 
-                  padding: '1px' 
-                }} 
-                onClick={e => e.stopPropagation()}
-              >
+            {/* Action Row */}
+            <div style={{ width: '100%' }}>
+              {qty > 0 ? (
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'var(--primary)', 
+                    borderRadius: 'var(--radius-md)', 
+                    padding: '2px',
+                    height: '28px',
+                  }} 
+                  onClick={e => e.stopPropagation()}
+                >
+                  <button
+                    onClick={handleDecrement}
+                    style={{
+                      width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#ffffff', fontWeight: 'bold', fontSize: 14
+                    }}
+                  >
+                    -
+                  </button>
+                  <span style={{ color: '#ffffff', fontWeight: 800, fontSize: 12 }}>{qty}</span>
+                  <button
+                    onClick={handleIncrement}
+                    style={{
+                      width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#ffffff', fontWeight: 'bold', fontSize: 14
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+              ) : (
                 <button
-                  onClick={handleDecrement}
+                  onClick={handleAdd}
+                  disabled={!product.available}
                   style={{
-                    width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: '#ffffff', fontWeight: 'bold', fontSize: 14
+                    background: '#ffffff',
+                    border: '1.5px solid var(--primary)',
+                    color: 'var(--primary)',
+                    width: '100%',
+                    height: '28px',
+                    borderRadius: 'var(--radius-md)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 750,
+                    fontSize: 12,
+                    boxShadow: '0 2px 4px rgba(132, 194, 37, 0.05)',
+                    opacity: product.available ? 1 : 0.5,
                   }}
                 >
-                  -
+                  ADD
                 </button>
-                <span style={{ color: '#ffffff', fontWeight: 700, fontSize: 11, padding: '0 4px' }}>{qty}</span>
-                <button
-                  onClick={handleIncrement}
-                  style={{
-                    width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: '#ffffff', fontWeight: 'bold', fontSize: 14
-                  }}
-                >
-                  +
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={handleAdd}
-                disabled={!product.available}
-                style={{
-                  background: 'var(--primary)',
-                  color: '#ffffff',
-                  width: 26,
-                  height: 26,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 750,
-                  fontSize: 16,
-                  boxShadow: '0 2px 6px rgba(132, 194, 37, 0.15)',
-                  opacity: product.available ? 1 : 0.5,
-                }}
-              >
-                +
-              </button>
-            )}
+              )}
+            </div>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
