@@ -481,3 +481,40 @@ html:not(.icons-loaded) .material-symbols-outlined * {
 .animate-image-fade {
   animation: imageFade 0.4s ease-out forwards;
 }
+
+/* --- Floating WhatsApp Button --- */
+.whatsapp-float {
+  position: fixed;
+  bottom: 130px;
+  right: 16px;
+  width: 50px;
+  height: 50px;
+  background-color: #25d366;
+  color: #ffffff !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+  z-index: 45; /* above BottomNav (40) and CartBar (30) */
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.whatsapp-float:hover {
+  background-color: #128c7e;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(18, 140, 126, 0.4);
+}
+
+.whatsapp-float:active {
+  transform: scale(0.95);
+}
+
+@media (min-width: 481px) {
+  .whatsapp-float {
+    right: calc(50% - 224px); /* Pinned to the right edge of the 480px centered mobile layout */
+  }
+}

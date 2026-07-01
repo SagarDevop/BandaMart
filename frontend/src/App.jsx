@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { ProductProvider } from './context/ProductContext';
+import WhatsAppFloat from './components/WhatsAppFloat';
 
 import Home from './pages/Home';
 import CategoryList from './pages/CategoryList';
@@ -67,6 +68,7 @@ export default function App() {
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          <WhatsAppFloat />
         </CartProvider>
       </ProductProvider>
     </BrowserRouter>
