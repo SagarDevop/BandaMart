@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts, API_BASE } from '../../context/ProductContext';
 
+const PREDEFINED_UNITS = ['kg', 'g', 'piece', 'dozen', 'bunch', 'packet', 'string', '250g', '500g', '5 pcs', '10 pcs'];
+
 export default function ProductManager() {
   const navigate = useNavigate();
   const { products, categories, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -273,12 +275,40 @@ export default function ProductManager() {
                 </div>
                 <div>
                   <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Unit *</label>
-                  <select value={form.unit} onChange={e => setForm(f => ({...f, unit: e.target.value}))}
+                  <select 
+                    value={PREDEFINED_UNITS.includes(form.unit) ? form.unit : 'custom'} 
+                    onChange={e => {
+                      const val = e.target.value;
+                      if (val === 'custom') {
+                        setForm(f => ({ ...f, unit: '' }));
+                      } else {
+                        setForm(f => ({ ...f, unit: val }));
+                      }
+                    }}
                     style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }}>
-                    {['kg','g','piece','dozen','bunch','packet','string','250g','500g','5 pcs','10 pcs'].map(u =>
+                    {PREDEFINED_UNITS.map(u =>
                       <option key={u} value={u}>{u}</option>
                     )}
+                    <option value="custom">Custom (Type unit...)</option>
                   </select>
+                  {!PREDEFINED_UNITS.includes(form.unit) && (
+                    <input 
+                      type="text" 
+                      placeholder="e.g. 400g" 
+                      value={form.unit} 
+                      onChange={e => setForm(f => ({ ...f, unit: e.target.value }))}
+                      style={{ 
+                        width: '100%', 
+                        marginTop: 8, 
+                        padding: '12px 16px', 
+                        background: 'var(--surface-container-low)', 
+                        borderRadius: 'var(--radius-lg)', 
+                        fontSize: 15, 
+                        color: 'var(--on-surface)', 
+                        border: '1px solid var(--outline-variant)' 
+                      }} 
+                    />
+                  )}
                 </div>
               </div>
               <div>
