@@ -22,8 +22,11 @@ export default function ProductDetail() {
   React.useEffect(() => {
     if (product) {
       setActiveImage(product.image);
+      setLocalQty(Math.max(1, qty));
+      setAdding(false);
+      setAdded(false);
     }
-  }, [product, productId]);
+  }, [product, productId, qty]);
 
   const allImages = product ? [
     product.image,
