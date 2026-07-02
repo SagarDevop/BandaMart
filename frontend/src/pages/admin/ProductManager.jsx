@@ -313,7 +313,7 @@ export default function ProductManager() {
               </div>
 
               {!form.hasSizes ? (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-md)' }}>
+                <div className="admin-price-unit-row">
                   <div>
                     <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Original Price (MRP)</label>
                     <input type="number" placeholder="e.g. 1299" value={form.originalPrice} onChange={e => setForm(f => ({...f, originalPrice: e.target.value}))}
@@ -374,7 +374,7 @@ export default function ProductManager() {
                 }}>
                   <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary)' }}>Size Variants List</span>
                   {form.sizes.map((variant, idx) => (
-                    <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 40px', gap: 8, alignItems: 'center' }}>
+                    <div key={idx} className="admin-variant-row">
                       <input 
                         type="text" 
                         placeholder="Size (e.g. S, 5L, 9)" 
