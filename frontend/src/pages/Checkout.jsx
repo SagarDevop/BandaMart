@@ -38,9 +38,10 @@ export default function Checkout() {
     if (!validate()) return;
     setSending(true);
 
-    const productLines = items.map(item =>
-      `• ${item.name} – ${item.quantity} ${item.unit}`
-    ).join('\n');
+    const productLines = items.map(item => {
+      const sizeStr = item.selectedSize ? ` (${item.selectedSize})` : '';
+      return `• ${item.name}${sizeStr} – ${item.quantity} ${item.unit}`;
+    }).join('\n');
 
     const deliveryCharge = APP_CONFIG.deliveryFee;
     const finalTotal = totalPrice + deliveryCharge;

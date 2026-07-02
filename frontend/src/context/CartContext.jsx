@@ -19,15 +19,18 @@ function cartReducer(state, action) {
   let newState;
   switch (action.type) {
     case 'ADD_ITEM': {
-      const existing = state.find(item => item.id === action.product.id);
+      const itemKey = action.product.selectedSize
+        ? `${action.product.id}_${action.product.selectedSize}`
+        : action.product.id;
+      const existing = state.find(item => item.id === itemKey);
       if (existing) {
         newState = state.map(item =>
-          item.id === action.product.id
+          item.id === itemKey
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        newState = [...state, { ...action.product, quantity: 1 }];
+        newState = [...state, { ...action.product, id: itemKey, productId: action.product.id, quantity: 1 }];
       }
       break;
     }
@@ -66,8 +69,9 @@ export function CartProvider({ children }) {
   const increment = (id) => dispatch({ type: 'INCREMENT', id });
   const decrement = (id) => dispatch({ type: 'DECREMENT', id });
   const clearCart = () => dispatch({ type: 'CLEAR' });
-  const getItemQuantity = (id) => {
-    const item = items.find(i => i.id === id);
+  const getItemQuantity = (id, selectedSize) => {
+    const itemKey = selectedSize ? `${id}_${selectedSize}` : id;
+    const item = items.find(i => i.id === itemKey);
     return item ? item.quantity : 0;
   };
 

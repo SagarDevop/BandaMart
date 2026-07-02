@@ -11,7 +11,10 @@ export default function ProductDetail() {
   const { getProduct, products } = useProducts();
   const { addItem, getItemQuantity, increment, decrement } = useCart();
   const product = getProduct(productId);
-  const qty = getItemQuantity(productId);
+  const hasVariants = product && product.sizes && product.sizes.length > 0;
+  const [selectedSize, setSelectedSize] = useState('');
+
+  const qty = getItemQuantity(productId, hasVariants ? selectedSize : undefined);
   const [localQty, setLocalQty] = useState(Math.max(1, qty));
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
@@ -22,11 +25,16 @@ export default function ProductDetail() {
   React.useEffect(() => {
     if (product) {
       setActiveImage(product.image);
-      setLocalQty(Math.max(1, qty));
+      const initialSize = product.sizes && product.sizes.length > 0 ? product.sizes[0].size : '';
+      setSelectedSize(initialSize);
       setAdding(false);
       setAdded(false);
     }
-  }, [product, productId, qty]);
+  }, [product, productId]);
+
+  React.useEffect(() => {
+    setLocalQty(Math.max(1, qty));
+  }, [selectedSize, qty]);
 
   const allImages = product ? [
     product.image,
@@ -36,13 +44,24 @@ export default function ProductDetail() {
   ].filter(Boolean) : [];
 
   // Price calculations
-  const hasOriginal = product ? (product.originalPrice && product.originalPrice > product.price) : false;
+  const activeVariant = hasVariants && selectedSize
+    ? product.sizes.find(s => s.size === selectedSize) || product.sizes[0]
+    : null;
+
+  const currentPrice = activeVariant ? activeVariant.price : (product ? product.price : 0);
+  const currentOriginalPrice = activeVariant ? activeVariant.originalPrice : (product ? product.originalPrice : 0);
+
+  const hasOriginal = activeVariant
+    ? (currentOriginalPrice && currentOriginalPrice > currentPrice)
+    : (product ? (product.originalPrice && product.originalPrice > product.price) : false);
+
   const discountPercent = product ? (hasOriginal
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : ((product.price % 3 === 0) ? 15 : (product.price % 2 === 0) ? 10 : 20)) : 0;
+    ? Math.round((((activeVariant ? currentOriginalPrice : product.originalPrice) - currentPrice) / (activeVariant ? currentOriginalPrice : product.originalPrice)) * 100)
+    : ((currentPrice % 3 === 0) ? 15 : (currentPrice % 2 === 0) ? 10 : 20)) : 0;
+
   const originalPrice = product ? (hasOriginal
-    ? product.originalPrice
-    : Math.round(product.price / (1 - (discountPercent / 100)))) : 0;
+    ? (activeVariant ? currentOriginalPrice : product.originalPrice)
+    : Math.round(currentPrice / (1 - (discountPercent / 100)))) : 0;
 
   if (!product) {
     return (
@@ -76,9 +95,21 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (qty > 0) return;
     setAdding(true);
-    addItem(product);
+
+    const cartProduct = {
+      ...product,
+      price: currentPrice,
+      originalPrice: originalPrice,
+    };
+    if (hasVariants) {
+      cartProduct.selectedSize = selectedSize;
+    }
+
+    addItem(cartProduct);
+    
+    const itemKey = hasVariants ? `${product.id}_${selectedSize}` : product.id;
     for (let i = 1; i < localQty; i++) {
-      increment(product.id);
+      increment(itemKey);
     }
     setTimeout(() => {
       setAdding(false);
@@ -87,7 +118,8 @@ export default function ProductDetail() {
     }, 400);
   };
 
-  const totalPrice = product.price * localQty;
+  const totalPrice = currentPrice * localQty;
+  const itemKey = hasVariants ? `${product.id}_${selectedSize}` : product.id;
 
   return (
     <div className="app-container" style={{ paddingBottom: 100 }}>
@@ -246,19 +278,19 @@ export default function ProductDetail() {
             </div>
             <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                {originalPrice > product.price && (
+                {originalPrice > currentPrice && (
                   <span style={{ textDecoration: 'line-through', fontSize: 13, color: 'var(--outline)', opacity: 0.8 }}>
                     ₹{originalPrice}
                   </span>
                 )}
                 <span className="text-headline-lg" style={{ color: '#2d8a4e', margin: 0, fontWeight: 800 }}>
-                  ₹{product.price}
+                  ₹{currentPrice}
                 </span>
               </div>
               <span style={{ fontSize: 12, color: 'var(--outline)' }}>
-                per {product.unit}
+                {hasVariants ? `per Option (${selectedSize})` : `per ${product.unit}`}
               </span>
-              {originalPrice > product.price && (
+              {originalPrice > currentPrice && (
                 <span style={{
                   fontSize: '10px',
                   background: '#ff3f6c',
@@ -273,6 +305,57 @@ export default function ProductDetail() {
               )}
             </div>
           </div>
+
+          {/* Size Variants Pill Selector */}
+          {hasVariants && (
+            <div style={{
+              borderTop: '1px solid var(--outline-variant)',
+              paddingTop: 'var(--space-md)',
+              marginBottom: 'var(--space-md)',
+              borderTopColor: 'rgba(194,201,187,0.3)',
+            }}>
+              <h3 className="text-title-md" style={{
+                color: 'var(--primary)',
+                margin: '0 0 var(--space-sm)',
+              }}>
+                Select Size / Option
+              </h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                {product.sizes.map((variant) => {
+                  const isSelected = selectedSize === variant.size;
+                  return (
+                    <button
+                      key={variant.size}
+                      onClick={() => setSelectedSize(variant.size)}
+                      style={{
+                        padding: '10px 20px',
+                        borderRadius: 'var(--radius-lg)',
+                        border: isSelected ? '2px solid var(--primary)' : '1.5px solid var(--outline-variant)',
+                        background: isSelected ? 'var(--primary-container)' : 'var(--surface-container-lowest)',
+                        color: isSelected ? 'var(--primary)' : 'var(--on-surface)',
+                        fontWeight: 700,
+                        fontSize: 14,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                        boxShadow: isSelected ? '0 2px 8px rgba(132, 194, 37, 0.2)' : 'none',
+                      }}
+                    >
+                      {variant.size}
+                      <span style={{
+                        display: 'block',
+                        fontSize: 11,
+                        fontWeight: 500,
+                        color: isSelected ? 'var(--primary)' : 'var(--outline)',
+                        marginTop: 2
+                      }}>
+                        ₹{variant.price}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Description */}
           <div style={{
@@ -366,7 +449,7 @@ export default function ProductDetail() {
               <button
                 onClick={() => {
                   if (qty > 0) {
-                    decrement(product.id);
+                    decrement(itemKey);
                   } else {
                     setLocalQty(q => Math.max(1, q - 1));
                   }
@@ -394,7 +477,7 @@ export default function ProductDetail() {
               <button
                 onClick={() => {
                   if (qty > 0) {
-                    increment(product.id);
+                    increment(itemKey);
                   } else {
                     setLocalQty(q => q + 1);
                   }
@@ -510,7 +593,7 @@ export default function ProductDetail() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
             }}>
               <button
-                onClick={() => decrement(product.id)}
+                onClick={() => decrement(itemKey)}
                 style={{
                   width: 38, height: 38, borderRadius: 'var(--radius-lg)',
                   background: 'var(--primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -526,7 +609,7 @@ export default function ProductDetail() {
                 {qty}
               </span>
               <button
-                onClick={() => increment(product.id)}
+                onClick={() => increment(itemKey)}
                 style={{
                   width: 38, height: 38, borderRadius: 'var(--radius-lg)',
                   background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',

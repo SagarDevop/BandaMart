@@ -118,7 +118,15 @@ const productSchema = new mongoose.Schema({
   image3: { type: String, default: '' },
   description: { type: String, default: '' },
   available: { type: Boolean, default: true },
-  featured: { type: Boolean, default: false }
+  featured: { type: Boolean, default: false },
+  sizes: [
+    {
+      size: { type: String, required: true },
+      price: { type: Number, required: true },
+      originalPrice: { type: Number },
+      costPrice: { type: Number }
+    }
+  ]
 }, { timestamps: true });
 
 productSchema.index({ createdAt: -1 });

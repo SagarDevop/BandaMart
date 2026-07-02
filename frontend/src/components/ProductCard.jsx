@@ -26,13 +26,23 @@ export default function ProductCard({ product, compact = false }) {
     decrement(product.id);
   };
 
-  const hasOriginal = product.originalPrice && product.originalPrice > product.price;
+  const hasVariants = product.sizes && product.sizes.length > 0;
+  const activeVariant = hasVariants 
+    ? [...product.sizes].sort((a, b) => a.price - b.price)[0]
+    : null;
+  const displayPrice = hasVariants ? activeVariant.price : product.price;
+  
+  const hasOriginal = hasVariants 
+    ? (activeVariant.originalPrice && activeVariant.originalPrice > activeVariant.price)
+    : (product.originalPrice && product.originalPrice > product.price);
+    
   const discountPercent = hasOriginal
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : ((product.price % 3 === 0) ? 15 : (product.price % 2 === 0) ? 10 : 20);
+    ? Math.round((((hasVariants ? activeVariant.originalPrice : product.originalPrice) - displayPrice) / (hasVariants ? activeVariant.originalPrice : product.originalPrice)) * 100)
+    : ((displayPrice % 3 === 0) ? 15 : (displayPrice % 2 === 0) ? 10 : 20);
+    
   const originalPrice = hasOriginal
-    ? product.originalPrice
-    : Math.round(product.price / (1 - (discountPercent / 100)));
+    ? (hasVariants ? activeVariant.originalPrice : product.originalPrice)
+    : Math.round(displayPrice / (1 - (discountPercent / 100)));
 
   return (
     <div
@@ -171,7 +181,7 @@ export default function ProductCard({ product, compact = false }) {
           display: 'block',
           marginBottom: compact ? '4px' : '6px',
         }}>
-          {product.unit}
+          {hasVariants ? `${product.sizes.length} Options Available` : product.unit}
         </span>
 
         {/* Rating Row (Premium touch) */}
@@ -183,7 +193,7 @@ export default function ProductCard({ product, compact = false }) {
         }}>
           <span style={{ fontSize: '10px', color: '#ffb300' }}>★</span>
           <span style={{ fontSize: '9.5px', fontWeight: 700, color: '#4a5568' }}>
-            {product.rating || (product.price % 5 === 0 ? '4.5' : product.price % 3 === 0 ? '4.3' : '4.4')}
+            {product.rating || (displayPrice % 5 === 0 ? '4.5' : displayPrice % 3 === 0 ? '4.3' : '4.4')}
           </span>
         </div>
 
@@ -198,9 +208,9 @@ export default function ProductCard({ product, compact = false }) {
             {/* Price Row */}
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', flexWrap: 'wrap', lineHeight: 1.1 }}>
               <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--on-background)' }}>
-                ₹{product.price}
+                ₹{displayPrice}
               </span>
-              {originalPrice > product.price && (
+              {originalPrice > displayPrice && (
                 <span style={{ fontSize: '9.5px', color: 'var(--outline)', textDecoration: 'line-through' }}>
                   ₹{originalPrice}
                 </span>
@@ -209,7 +219,30 @@ export default function ProductCard({ product, compact = false }) {
 
             {/* Action Row */}
             <div style={{ width: '100%' }}>
-              {qty > 0 ? (
+              {hasVariants ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/product/${product.id}`);
+                  }}
+                  style={{
+                    background: '#ffffff',
+                    border: '1.5px solid var(--primary)',
+                    color: 'var(--primary)',
+                    width: '100%',
+                    height: '28px',
+                    borderRadius: 'var(--radius-md)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 750,
+                    fontSize: 12,
+                    boxShadow: '0 2px 4px rgba(132, 194, 37, 0.05)',
+                  }}
+                >
+                  SELECT SIZE
+                </button>
+              ) : qty > 0 ? (
                 <div 
                   style={{ 
                     display: 'flex', 
@@ -277,9 +310,9 @@ export default function ProductCard({ product, compact = false }) {
               gap: '6px',
             }}>
               <span style={{ fontWeight: 800, color: '#2d8a4e', fontSize: 16 }}>
-                ₹{product.price}
+                ₹{displayPrice}
               </span>
-              {originalPrice > product.price && (
+              {originalPrice > displayPrice && (
                 <span style={{ textDecoration: 'line-through', fontSize: 12, color: 'var(--outline)', opacity: 0.8 }}>
                   ₹{originalPrice}
                 </span>
@@ -288,7 +321,32 @@ export default function ProductCard({ product, compact = false }) {
 
             {/* Large Stepper/Button */}
             <div style={{ marginTop: 'auto' }}>
-              {qty === 0 ? (
+              {hasVariants ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/product/${product.id}`);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 16px',
+                    borderRadius: 'var(--radius-md)',
+                    background: '#ffffff',
+                    border: '1.5px solid var(--primary)',
+                    color: 'var(--primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    fontSize: 13,
+                    transition: 'all 0.15s ease',
+                  }}
+                  onPointerDown={e => e.currentTarget.style.background = 'var(--primary-container)'}
+                  onPointerUp={e => e.currentTarget.style.background = '#ffffff'}
+                >
+                  Select Size
+                </button>
+              ) : qty === 0 ? (
                 <button
                   onClick={handleAdd}
                   disabled={!product.available}

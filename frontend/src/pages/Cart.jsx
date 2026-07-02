@@ -143,7 +143,7 @@ export default function Cart() {
                     {item.name}
                   </h3>
                   <p className="text-body-md" style={{ color: 'var(--on-surface-variant)', margin: '2px 0 0' }}>
-                    {item.quantity} {item.unit}
+                    {item.quantity} {item.unit} {item.selectedSize && ` · Size: ${item.selectedSize}`}
                   </p>
                 </div>
                 <div style={{

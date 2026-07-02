@@ -15,6 +15,8 @@ export default function ProductManager() {
     name: '', category: '', price: '', originalPrice: '', unit: 'kg',
     description: '', available: true, featured: false, image: '',
     image1: '', image2: '', image3: '',
+    hasSizes: false,
+    sizes: [],
   });
 
   const filtered = products.filter(p =>
@@ -26,7 +28,9 @@ export default function ProductManager() {
     setForm({
       name: '', category: categories[0]?.id || '', price: '', originalPrice: '',
       unit: 'kg', description: '', available: true, featured: false, image: '',
-      image1: '', image2: '', image3: ''
+      image1: '', image2: '', image3: '',
+      hasSizes: false,
+      sizes: [],
     });
     setShowModal(true);
   };
@@ -40,6 +44,8 @@ export default function ProductManager() {
       image1: product.image1 || '',
       image2: product.image2 || '',
       image3: product.image3 || '',
+      hasSizes: !!(product.sizes && product.sizes.length > 0),
+      sizes: product.sizes || [],
     });
     setShowModal(true);
   };
@@ -73,12 +79,39 @@ export default function ProductManager() {
   };
 
   const handleSave = () => {
-    if (!form.name || !form.price || !form.category) return;
+    if (!form.name || !form.category) return;
+
+    if (!form.hasSizes && !form.price) {
+      alert('Price is required for standard products.');
+      return;
+    }
+    if (form.hasSizes && (!form.sizes || form.sizes.length === 0)) {
+      alert('Please add at least one size variant.');
+      return;
+    }
+
+    const parsedSizes = form.hasSizes
+      ? form.sizes.map(s => ({
+          size: s.size,
+          price: Number(s.price),
+          originalPrice: s.originalPrice ? Number(s.originalPrice) : undefined
+        }))
+      : [];
+
+    const mainPrice = form.hasSizes ? Number(parsedSizes[0].price) : Number(form.price);
+    const mainOriginalPrice = form.hasSizes 
+      ? (parsedSizes[0].originalPrice ? Number(parsedSizes[0].originalPrice) : undefined)
+      : (form.originalPrice ? Number(form.originalPrice) : undefined);
+
     const data = {
       ...form,
-      price: Number(form.price),
-      originalPrice: form.originalPrice ? Number(form.originalPrice) : undefined,
+      price: mainPrice,
+      originalPrice: mainOriginalPrice,
+      sizes: parsedSizes,
     };
+
+    delete data.hasSizes;
+
     if (editingProduct) {
       updateProduct(editingProduct.id, data);
     } else {
@@ -196,8 +229,16 @@ export default function ProductManager() {
               <div style={{ flexGrow: 1, minWidth: 0 }}>
                 <p className="truncate" style={{ fontWeight: 600, fontSize: 15, margin: 0 }}>{product.name}</p>
                 <p className="text-label-sm" style={{ color: 'var(--outline)', margin: '2px 0 0', lineHeight: 1.4 }}>
-                  Price: <strong>₹{product.price}</strong>/{product.unit}
-                  {product.originalPrice ? ` · MRP: ₹${product.originalPrice}` : ''}
+                  {product.sizes && product.sizes.length > 0 ? (
+                    <>
+                      Sizes: <strong>{product.sizes.map(s => `${s.size} (₹${s.price})`).join(', ')}</strong>
+                    </>
+                  ) : (
+                    <>
+                      Price: <strong>₹{product.price}</strong>/{product.unit}
+                      {product.originalPrice ? ` · MRP: ₹${product.originalPrice}` : ''}
+                    </>
+                  )}
                   <br />
                   Category: {categories.find(c => c.id === product.category)?.name || 'None'}
                 </p>
@@ -262,55 +303,161 @@ export default function ProductManager() {
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-md)' }}>
-                <div>
-                  <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Original Price (MRP)</label>
-                  <input type="number" placeholder="e.g. 1299" value={form.originalPrice} onChange={e => setForm(f => ({...f, originalPrice: e.target.value}))}
-                    style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }} />
-                </div>
-                <div>
-                  <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Selling Price *</label>
-                  <input type="number" placeholder="e.g. 999" value={form.price} onChange={e => setForm(f => ({...f, price: e.target.value}))}
-                    style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }} />
-                </div>
-                <div>
-                  <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Unit *</label>
-                  <select 
-                    value={PREDEFINED_UNITS.includes(form.unit) ? form.unit : 'custom'} 
-                    onChange={e => {
-                      const val = e.target.value;
-                      if (val === 'custom') {
-                        setForm(f => ({ ...f, unit: '' }));
-                      } else {
-                        setForm(f => ({ ...f, unit: val }));
-                      }
-                    }}
-                    style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }}>
-                    {PREDEFINED_UNITS.map(u =>
-                      <option key={u} value={u}>{u}</option>
-                    )}
-                    <option value="custom">Custom (Type unit...)</option>
-                  </select>
-                  {!PREDEFINED_UNITS.includes(form.unit) && (
-                    <input 
-                      type="text" 
-                      placeholder="e.g. 400g" 
-                      value={form.unit} 
-                      onChange={e => setForm(f => ({ ...f, unit: e.target.value }))}
-                      style={{ 
-                        width: '100%', 
-                        marginTop: 8, 
-                        padding: '12px 16px', 
-                        background: 'var(--surface-container-low)', 
-                        borderRadius: 'var(--radius-lg)', 
-                        fontSize: 15, 
-                        color: 'var(--on-surface)', 
-                        border: '1px solid var(--outline-variant)' 
-                      }} 
-                    />
-                  )}
-                </div>
+              {/* Checkbox for sizes */}
+              <div style={{ margin: '8px 0' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, cursor: 'pointer', fontWeight: 600 }}>
+                  <input type="checkbox" checked={form.hasSizes} onChange={e => setForm(f => ({ ...f, hasSizes: e.target.checked }))}
+                    style={{ width: 18, height: 18, accentColor: 'var(--primary)' }} />
+                  This product has size / price variants
+                </label>
               </div>
+
+              {!form.hasSizes ? (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-md)' }}>
+                  <div>
+                    <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Original Price (MRP)</label>
+                    <input type="number" placeholder="e.g. 1299" value={form.originalPrice} onChange={e => setForm(f => ({...f, originalPrice: e.target.value}))}
+                      style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }} />
+                  </div>
+                  <div>
+                    <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Selling Price *</label>
+                    <input type="number" placeholder="e.g. 999" value={form.price} onChange={e => setForm(f => ({...f, price: e.target.value}))}
+                      style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }} />
+                  </div>
+                  <div>
+                    <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Unit *</label>
+                    <select 
+                      value={PREDEFINED_UNITS.includes(form.unit) ? form.unit : 'custom'} 
+                      onChange={e => {
+                        const val = e.target.value;
+                        if (val === 'custom') {
+                          setForm(f => ({ ...f, unit: '' }));
+                        } else {
+                          setForm(f => ({ ...f, unit: val }));
+                        }
+                      }}
+                      style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-container-low)', borderRadius: 'var(--radius-lg)', fontSize: 15, color: 'var(--on-surface)', border: '1px solid var(--outline-variant)' }}>
+                      {PREDEFINED_UNITS.map(u =>
+                        <option key={u} value={u}>{u}</option>
+                      )}
+                      <option value="custom">Custom (Type unit...)</option>
+                    </select>
+                    {!PREDEFINED_UNITS.includes(form.unit) && (
+                      <input 
+                        type="text" 
+                        placeholder="e.g. 400g" 
+                        value={form.unit} 
+                        onChange={e => setForm(f => ({ ...f, unit: e.target.value }))}
+                        style={{ 
+                          width: '100%', 
+                          marginTop: 8, 
+                          padding: '12px 16px', 
+                          background: 'var(--surface-container-low)', 
+                          borderRadius: 'var(--radius-lg)', 
+                          fontSize: 15, 
+                          color: 'var(--on-surface)', 
+                          border: '1px solid var(--outline-variant)' 
+                        }} 
+                      />
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  background: 'var(--surface-container-low)',
+                  padding: 'var(--space-md)',
+                  borderRadius: 'var(--radius-lg)',
+                  border: '1px solid var(--outline-variant)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12
+                }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary)' }}>Size Variants List</span>
+                  {form.sizes.map((variant, idx) => (
+                    <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 40px', gap: 8, alignItems: 'center' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Size (e.g. S, 5L, 9)" 
+                        value={variant.size} 
+                        onChange={e => {
+                          const newSizes = [...form.sizes];
+                          newSizes[idx].size = e.target.value;
+                          setForm(f => ({ ...f, sizes: newSizes }));
+                        }}
+                        style={{ padding: '8px 10px', background: 'var(--surface)', borderRadius: 'var(--radius-md)', fontSize: 13, border: '1px solid var(--outline-variant)', color: 'var(--on-surface)' }}
+                      />
+                      <input 
+                        type="number" 
+                        placeholder="Price" 
+                        value={variant.price} 
+                        onChange={e => {
+                          const newSizes = [...form.sizes];
+                          newSizes[idx].price = e.target.value;
+                          setForm(f => ({ ...f, sizes: newSizes }));
+                        }}
+                        style={{ padding: '8px 10px', background: 'var(--surface)', borderRadius: 'var(--radius-md)', fontSize: 13, border: '1px solid var(--outline-variant)', color: 'var(--on-surface)' }}
+                      />
+                      <input 
+                        type="number" 
+                        placeholder="MRP" 
+                        value={variant.originalPrice || ''} 
+                        onChange={e => {
+                          const newSizes = [...form.sizes];
+                          newSizes[idx].originalPrice = e.target.value;
+                          setForm(f => ({ ...f, sizes: newSizes }));
+                        }}
+                        style={{ padding: '8px 10px', background: 'var(--surface)', borderRadius: 'var(--radius-md)', fontSize: 13, border: '1px solid var(--outline-variant)', color: 'var(--on-surface)' }}
+                      />
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          const newSizes = form.sizes.filter((_, i) => i !== idx);
+                          setForm(f => ({ ...f, sizes: newSizes }));
+                        }}
+                        style={{
+                          height: 36,
+                          borderRadius: 'var(--radius-md)',
+                          background: 'var(--error-container)',
+                          color: 'var(--on-error-container)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+                      </button>
+                    </div>
+                  ))}
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      setForm(f => ({
+                        ...f,
+                        sizes: [...(f.sizes || []), { size: '', price: '', originalPrice: '' }]
+                      }));
+                    }}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--surface)',
+                      border: '1.5px dashed var(--primary)',
+                      color: 'var(--primary)',
+                      fontWeight: 600,
+                      fontSize: 13,
+                      alignSelf: 'flex-start',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
+                    Add Variant
+                  </button>
+                </div>
+              )}
               <div>
                 <label className="text-label-sm" style={{ display: 'block', color: 'var(--on-surface-variant)', marginBottom: 4 }}>Description</label>
                 <textarea value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} rows={3}
