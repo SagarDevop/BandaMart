@@ -104,7 +104,8 @@ export const APP_CONFIG = {
   name: 'BandaMart',
   tagline: 'Sab kuch, sabke paas',
   currency: '₹',
-  deliveryFee: 20,
-  deliveryText: '₹20 (Flat)',
-  deliveryTime: '30-40 Mins'
+  deliveryFee: 25,
+  deliveryText: '₹25 (Flat)',
+  deliveryTime: '30-40 Mins',
+  handlingFee: 3
 };

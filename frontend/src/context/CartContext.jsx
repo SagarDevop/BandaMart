@@ -64,11 +64,16 @@ function cartReducer(state, action) {
 export function CartProvider({ children }) {
   const [items, dispatch] = useReducer(cartReducer, [], loadCart);
 
+  const [donation, setDonation] = React.useState(0);
+
   const addItem = (product) => dispatch({ type: 'ADD_ITEM', product });
   const removeItem = (id) => dispatch({ type: 'REMOVE_ITEM', id });
   const increment = (id) => dispatch({ type: 'INCREMENT', id });
   const decrement = (id) => dispatch({ type: 'DECREMENT', id });
-  const clearCart = () => dispatch({ type: 'CLEAR' });
+  const clearCart = () => {
+    dispatch({ type: 'CLEAR' });
+    setDonation(0);
+  };
   const getItemQuantity = (id, selectedSize) => {
     const itemKey = selectedSize ? `${id}_${selectedSize}` : id;
     const item = items.find(i => i.id === itemKey);
@@ -81,7 +86,8 @@ export function CartProvider({ children }) {
   return (
     <CartContext.Provider value={{
       items, addItem, removeItem, increment, decrement,
-      clearCart, getItemQuantity, totalItems, totalPrice
+      clearCart, getItemQuantity, totalItems, totalPrice,
+      donation, setDonation
     }}>
       {children}
     </CartContext.Provider>

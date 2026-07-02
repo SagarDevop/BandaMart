@@ -7,19 +7,19 @@ import { optimizeImageUrl } from '../utils/image';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items, totalPrice, totalItems, clearCart } = useCart();
+  const { items, totalPrice, totalItems, clearCart, donation } = useCart();
   const { whatsappNumber } = useProducts();
   const [form, setForm] = useState({ name: '', phone: '', address: '' });
   const [errors, setErrors] = useState({});
   const [sending, setSending] = useState(false);
 
   React.useEffect(() => {
-    if (items.length === 0) {
+    if (items.length === 0 || totalPrice < 150) {
       navigate('/cart', { replace: true });
     }
-  }, [items.length, navigate]);
+  }, [items.length, totalPrice, navigate]);
 
-  if (items.length === 0) {
+  if (items.length === 0 || totalPrice < 150) {
     return null;
   }
 
@@ -44,7 +44,13 @@ export default function Checkout() {
     }).join('\n');
 
     const deliveryCharge = APP_CONFIG.deliveryFee;
-    const finalTotal = totalPrice + deliveryCharge;
+    const handlingCharge = APP_CONFIG.handlingFee;
+    const donationCharge = donation;
+    const finalTotal = totalPrice + deliveryCharge + handlingCharge + donationCharge;
+
+    const donationSection = donationCharge > 0 
+      ? `\n❤️ *Donation (Banda Poor)*: ₹${donationCharge}` 
+      : '';
 
     const message = `Hello BandaMart,
 
@@ -58,6 +64,7 @@ I would like to place an order:
 ${productLines}
 
 🚚 *Delivery*: ₹${deliveryCharge} (Flat rate - Kitne ke bhi order pe! 🎉)
+⚙️ *Handling Cost*: ₹${handlingCharge}${donationSection}
 💵 *Total*: ${APP_CONFIG.currency}${finalTotal}
 
 Please confirm availability and delivery time. Thank you!`;
@@ -182,11 +189,12 @@ Please confirm availability and delivery time. Thank you!`;
                 <p className="text-body-md" style={{ fontWeight: 600, margin: 0 }}>
                   {totalItems} items in cart
                 </p>
-                <p className="text-label-sm" style={{ color: 'var(--on-surface-variant)', margin: '2px 0 0' }}>
-                  Subtotal: ₹{totalPrice} | Delivery: ₹{APP_CONFIG.deliveryFee}
+                <p className="text-label-sm" style={{ color: 'var(--on-surface-variant)', margin: '2px 0 0', lineHeight: 1.4 }}>
+                  Subtotal: ₹{totalPrice} | Delivery: ₹{APP_CONFIG.deliveryFee} | Handling: ₹{APP_CONFIG.handlingFee}
+                  {donation > 0 && ` | Donation: ₹${donation}`}
                 </p>
                 <p className="text-title-md" style={{ color: 'var(--primary)', fontWeight: 700, margin: '4px 0 0' }}>
-                  Total: ₹{totalPrice + APP_CONFIG.deliveryFee} <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--on-surface-variant)' }}>(Flat Delivery)</span>
+                  Total: ₹{totalPrice + APP_CONFIG.deliveryFee + APP_CONFIG.handlingFee + donation}
                 </p>
               </div>
             </div>

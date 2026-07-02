@@ -9,7 +9,7 @@ import { APP_CONFIG } from '../data/sampleData';
 
 export default function Cart() {
   const navigate = useNavigate();
-  const { items, increment, decrement, removeItem, totalPrice, totalItems, clearCart } = useCart();
+  const { items, increment, decrement, removeItem, totalPrice, totalItems, clearCart, donation, setDonation } = useCart();
 
   if (items.length === 0) {
     return (
@@ -193,6 +193,52 @@ export default function Cart() {
           ))}
         </div>
 
+        {/* Donation Selector Card */}
+        <div style={{
+          marginTop: 'var(--space-lg)',
+          background: 'linear-gradient(135deg, #fffcf6 0%, #fff9ee 100%)',
+          borderRadius: 'var(--radius-xl)',
+          padding: 'var(--space-md) var(--space-lg)',
+          border: '1px solid #ffe0b2',
+          boxShadow: 'var(--shadow-sm)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <span className="material-symbols-outlined filled" style={{ color: '#ff9800', fontSize: 20 }}>volunteer_activism</span>
+            <span style={{ fontSize: 13.5, fontWeight: 700, color: '#e65100' }}>
+              Donate for Poor People in Banda ❤️
+            </span>
+          </div>
+          <p style={{ fontSize: 11, color: 'var(--outline)', margin: '0 0 12px 0', lineHeight: 1.4 }}>
+            Help feed the underprivileged families in Banda. 100% of your donation goes to charity partners.
+          </p>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            {[5, 10, 20].map((amt) => {
+              const isSelected = donation === amt;
+              return (
+                <button
+                  key={amt}
+                  onClick={() => setDonation(isSelected ? 0 : amt)}
+                  style={{
+                    flex: 1,
+                    padding: '8px 0',
+                    borderRadius: 'var(--radius-lg)',
+                    background: isSelected ? 'var(--primary)' : '#ffffff',
+                    color: isSelected ? '#ffffff' : 'var(--primary)',
+                    border: isSelected ? '1px solid var(--primary)' : '1px solid var(--primary-container)',
+                    fontSize: 13,
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    boxShadow: isSelected ? '0 2px 8px rgba(132, 194, 37, 0.2)' : 'none',
+                  }}
+                >
+                  +₹{amt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Order Summary */}
         <div style={{
           marginTop: 'var(--space-lg)',
@@ -205,22 +251,32 @@ export default function Cart() {
             <span className="text-body-lg" style={{ color: 'var(--on-surface-variant)' }}>Subtotal</span>
             <span className="text-body-lg" style={{ color: 'var(--on-surface)' }}>₹{totalPrice}</span>
           </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-md)' }}>
+            <span className="text-body-lg" style={{ color: 'var(--on-surface-variant)' }}>Handling Cost</span>
+            <span className="text-body-lg" style={{ color: 'var(--on-surface)' }}>₹{APP_CONFIG.handlingFee}</span>
+          </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-md)' }}>
             <div>
               <span className="text-body-lg" style={{ color: 'var(--on-surface-variant)', display: 'block' }}>Delivery</span>
               <span style={{ fontSize: 11, color: 'var(--primary)', fontWeight: 600, display: 'block', marginTop: 2 }}>
-                Flat ₹20 (Sirf ₹20 kitne ke bhi order pe! 🔥)
+                Flat ₹25 (Sirf ₹25 kitne ke bhi order pe! 🔥)
               </span>
             </div>
             <span className="text-body-lg" style={{ color: 'var(--on-surface)', fontWeight: 600 }}>₹{APP_CONFIG.deliveryFee}</span>
           </div>
+          {donation > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-md)' }}>
+              <span className="text-body-lg" style={{ color: 'var(--primary)', fontWeight: 600 }}>Donation (Banda Poor) ❤️</span>
+              <span className="text-body-lg" style={{ color: 'var(--primary)', fontWeight: 600 }}>₹{donation}</span>
+            </div>
+          )}
           <div style={{
             paddingTop: 'var(--space-md)',
             borderTop: '1px solid var(--outline-variant)',
             display: 'flex', justifyContent: 'space-between',
           }}>
             <span className="text-headline-lg-mobile" style={{ color: 'var(--on-surface)' }}>Total</span>
-            <span className="text-headline-lg-mobile" style={{ color: 'var(--primary)' }}>₹{totalPrice + APP_CONFIG.deliveryFee}</span>
+            <span className="text-headline-lg-mobile" style={{ color: 'var(--primary)' }}>₹{totalPrice + APP_CONFIG.deliveryFee + APP_CONFIG.handlingFee + donation}</span>
           </div>
         </div>
       </main>
@@ -232,24 +288,53 @@ export default function Cart() {
         padding: 'var(--space-md) var(--container-padding)',
         zIndex: 'var(--z-cart-bar)',
       }}>
+        {totalPrice < 150 && (
+          <div style={{
+            background: '#fff5f5',
+            color: '#d32f2f',
+            padding: '10px 16px',
+            borderRadius: 'var(--radius-lg)',
+            fontSize: 13,
+            fontWeight: 700,
+            textAlign: 'center',
+            marginBottom: 10,
+            boxShadow: '0 2px 8px rgba(211, 47, 47, 0.08)',
+            border: '1px solid rgba(211, 47, 47, 0.15)',
+          }}>
+            ⚠️ Minimum order value is ₹150. Add ₹{150 - totalPrice} more to checkout!
+          </div>
+        )}
         <button
-          onClick={() => navigate('/checkout')}
+          onClick={() => {
+            if (totalPrice >= 150) {
+              navigate('/checkout');
+            }
+          }}
+          disabled={totalPrice < 150}
           style={{
             width: '100%',
-            background: 'var(--primary)',
-            color: 'var(--on-primary)',
+            background: totalPrice < 150 ? '#cccccc' : 'var(--primary)',
+            color: totalPrice < 150 ? '#666666' : 'var(--on-primary)',
             padding: 'var(--space-lg)',
             borderRadius: 'var(--radius-xl)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             gap: 'var(--space-sm)',
-            boxShadow: 'var(--shadow-xl)',
-            transition: 'transform 0.2s',
+            boxShadow: totalPrice < 150 ? 'none' : 'var(--shadow-xl)',
+            transition: 'all 0.2s ease',
+            cursor: totalPrice < 150 ? 'not-allowed' : 'pointer',
+            opacity: totalPrice < 150 ? 0.85 : 1,
           }}
-          onPointerDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
-          onPointerUp={e => e.currentTarget.style.transform = 'scale(1)'}
+          onPointerDown={e => {
+            if (totalPrice >= 150) e.currentTarget.style.transform = 'scale(0.98)';
+          }}
+          onPointerUp={e => {
+            if (totalPrice >= 150) e.currentTarget.style.transform = 'scale(1)';
+          }}
         >
           <span style={{ fontSize: 20 }}>💬</span>
-          <span className="text-title-md" style={{ fontSize: 16 }}>Order on WhatsApp</span>
+          <span className="text-title-md" style={{ fontSize: 16 }}>
+            {totalPrice < 150 ? 'Min Order ₹150 Required' : 'Order on WhatsApp'}
+          </span>
         </button>
       </div>
 
