@@ -490,39 +490,71 @@ export default function ProductDetail() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            background: '#ffffff',
-            border: '1.5px solid var(--primary)',
-            borderRadius: 'var(--radius-xl)',
-            padding: '4px',
-            height: 54,
-            boxShadow: '0 4px 20px rgba(132, 194, 37, 0.15)',
+            gap: 'var(--space-md)',
+            width: '100%',
           }}>
-            <button
-              onClick={() => decrement(product.id)}
-              style={{
-                width: 46, height: 46, borderRadius: 'var(--radius-lg)',
-                background: 'var(--primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--primary)', fontWeight: 'bold', fontSize: 18
-              }}
-            >
-              <span className="material-symbols-outlined" style={{ fontWeight: 'bold' }}>remove</span>
-            </button>
-            <span style={{
-              fontWeight: 800, fontSize: 16, color: 'var(--primary)',
-              minWidth: 40, textAlign: 'center'
+            {/* Stepper (Left) */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: '#ffffff',
+              border: '1.5px solid var(--primary)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '2px',
+              height: 52,
+              flex: 1,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
             }}>
-              {qty} in Cart
-            </span>
+              <button
+                onClick={() => decrement(product.id)}
+                style={{
+                  width: 38, height: 38, borderRadius: 'var(--radius-lg)',
+                  background: 'var(--primary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--primary)', fontWeight: 'bold', fontSize: 16
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontWeight: 'bold', fontSize: 18 }}>remove</span>
+              </button>
+              <span style={{
+                fontWeight: 800, fontSize: 14, color: 'var(--primary)',
+                minWidth: 24, textAlign: 'center'
+              }}>
+                {qty}
+              </span>
+              <button
+                onClick={() => increment(product.id)}
+                style={{
+                  width: 38, height: 38, borderRadius: 'var(--radius-lg)',
+                  background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#ffffff', fontWeight: 'bold', fontSize: 16
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontWeight: 'bold', fontSize: 18 }}>add</span>
+              </button>
+            </div>
+
+            {/* Go to Cart Button (Right) */}
             <button
-              onClick={() => increment(product.id)}
+              onClick={() => navigate('/cart')}
               style={{
-                width: 46, height: 46, borderRadius: 'var(--radius-lg)',
-                background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#ffffff', fontWeight: 'bold', fontSize: 18
+                flex: 1.2,
+                height: 52,
+                background: '#164b2b', // Premium forest green
+                color: '#ffffff',
+                borderRadius: 'var(--radius-xl)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                fontWeight: 800,
+                fontSize: 14.5,
+                boxShadow: '0 4px 16px rgba(22, 75, 43, 0.2)',
+                transition: 'all 0.2s ease',
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontWeight: 'bold' }}>add</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>shopping_cart</span>
+              Go to Cart
             </button>
           </div>
         ) : (
